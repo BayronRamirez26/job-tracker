@@ -13,6 +13,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
+        // Use FluentValidation's built-in (English) messages regardless of the host's OS culture,
+        // so error text stays consistent. Our explicit .WithMessage(...) rules are unaffected.
+        ValidatorOptions.Global.LanguageManager.Enabled = false;
+
         // Scan this assembly and register every AbstractValidator<T> as IValidator<T> (scoped).
         services.AddValidatorsFromAssemblyContaining<JobApplicationService>();
 

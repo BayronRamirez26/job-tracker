@@ -52,13 +52,22 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
             _logger.LogError(exception, "Unhandled exception processing {Path}", httpContext.Request.Path);
         }
 
+        // Validation specifics live in the `errors` extension, not in a free-text detail.
+        // NotFound/Domain messages are safe and useful; 500s must not leak internals.
+        var detail = exception switch
+        {
+            ValidationException => null,
+            NotFoundException or DomainException => exception.Message,
+            _ => null
+        };
+
         httpContext.Response.StatusCode = status;
 
         var problemDetails = new ProblemDetails
         {
             Status = status,
             Title = title,
-            Detail = status == StatusCodes.Status500InternalServerError ? null : exception.Message
+            Detail = detail
         };
 
         if (exception is ValidationException validationException)
