@@ -146,15 +146,22 @@ Interactive docs: **Swagger UI** at `/swagger` (Development environment).
 
 ## Testing
 
-> _Unit tests (mocked repositories) and integration tests (real PostgreSQL via
-> Testcontainers) — added in a dedicated step._
+```
+dotnet test
+```
+
+- **Unit tests** (`tests/JobTracker.Applications.UnitTests`) — Domain and Application
+  logic in isolation (xUnit + NSubstitute); no database required, fast.
+- **Integration tests** (`tests/JobTracker.Applications.IntegrationTests`) — the full API
+  over real HTTP against a throwaway PostgreSQL container (Testcontainers +
+  `WebApplicationFactory`). **Requires Docker to be running.**
 
 ---
 
 ## Roadmap
 
-- [ ] **Phase 1 — Applications Service:** standalone REST API, Clean Architecture,
-      EF Core + PostgreSQL, validation, proper HTTP status codes, tests.
+- [x] **Phase 1 — Applications Service:** standalone REST API, Clean Architecture,
+      EF Core + PostgreSQL, validation, proper HTTP status codes, tests. ✅
 - [ ] **Phase 2 — Users/Auth Service.**
 - [ ] **Phase 3 — API Gateway (YARP) + Docker Compose orchestration.**
 - [ ] **Phase 4 — AI Service.**

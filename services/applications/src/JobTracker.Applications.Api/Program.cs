@@ -45,3 +45,7 @@ app.MapControllers();
 app.MapHealthChecks("/health");
 
 app.Run();
+
+// Exposed so the integration-test project can boot the app via WebApplicationFactory<Program>.
+// (Top-level statements otherwise compile Program as an internal class the tests can't reference.)
+public partial class Program { }
