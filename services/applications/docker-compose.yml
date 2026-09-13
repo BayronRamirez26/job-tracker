@@ -1,0 +1,36 @@
+# Local development database for the Applications service.
+#
+# Phase 1 scope: this runs ONLY PostgreSQL. Containerizing the API itself and a top-level
+# compose that orchestrates every service arrive in the later Docker phase (Phase 3).
+#
+# The credentials below are for a LOCAL, throwaway dev database that only listens on
+# localhost — they are intentionally simple and safe to commit. Real/staging/prod secrets
+# never live in a committed file; they come from environment variables or a secret store.
+#
+# Usage (from services/applications/):
+#   docker compose up -d      # start PostgreSQL in the background
+#   docker compose ps         # check status / health
+#   docker compose down       # stop (data is preserved in the named volume)
+#   docker compose down -v    # stop AND delete the data volume (fresh start)
+
+services:
+  applications-db:
+    image: postgres:16
+    container_name: jobtracker-applications-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: applications
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - applications-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d applications"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  applications-db-data:

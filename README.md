@@ -89,15 +89,58 @@ job-tracker/
 
 ## Getting started
 
-> _To be filled in as the service takes shape (run PostgreSQL, apply migrations, run the API)._
+**Prerequisites:** .NET 8 SDK, Docker Desktop (for PostgreSQL), git, and the EF Core CLI:
 
-Prerequisites: .NET 8 SDK, Docker (for PostgreSQL), git.
+```
+dotnet tool install --global dotnet-ef --version 8.0.10
+```
+
+All commands below are run from `services/applications/`.
+
+**1. Start PostgreSQL**
+
+```
+docker compose up -d
+```
+
+Runs `postgres:16` on `localhost:5432` (database `applications`, user/password `postgres`/`postgres` — local dev only).
+
+**2. Configure the connection string** (local dev value, stored in user-secrets, not committed)
+
+```
+dotnet user-secrets set "ConnectionStrings:ApplicationsDb" "Host=localhost;Port=5432;Database=applications;Username=postgres;Password=postgres" --project src/JobTracker.Applications.Api
+```
+
+**3. Apply the database migrations**
+
+```
+dotnet ef database update --project src/JobTracker.Applications.Infrastructure --startup-project src/JobTracker.Applications.Infrastructure
+```
+
+**4. Run the API**
+
+```
+dotnet run --project src/JobTracker.Applications.Api
+```
+
+Swagger UI is served in Development at `/swagger` (e.g. `http://localhost:5263/swagger`).
 
 ---
 
 ## API endpoints
 
-> _Documented once the controllers exist. Swagger UI will be available in Development._
+Base route: `/api/job-applications`. Enums (`status`, `source`) are exchanged as strings
+(e.g. `"Applied"`, `"LinkedIn"`). Errors are returned as RFC 7807 `ProblemDetails`.
+
+| Verb   | Route                        | Success          | Errors    |
+| ------ | ---------------------------- | ---------------- | --------- |
+| GET    | `/api/job-applications`      | 200 (list)       | —         |
+| GET    | `/api/job-applications/{id}` | 200              | 404       |
+| POST   | `/api/job-applications`      | 201 + `Location` | 400       |
+| PUT    | `/api/job-applications/{id}` | 200 (updated)    | 400, 404  |
+| DELETE | `/api/job-applications/{id}` | 204              | 404       |
+
+Interactive docs: **Swagger UI** at `/swagger` (Development environment).
 
 ---
 
