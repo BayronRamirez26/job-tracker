@@ -1,0 +1,84 @@
+# Top-level orchestration for the whole system (Phase 3): both databases, both service APIs,
+# and the YARP gateway, on one network. Only the gateway is published to the host — clients
+# talk to http://localhost:8080 and the gateway routes to the services by their container names.
+#
+#   docker compose up --build        # build images and start everything
+#   docker compose down              # stop (data kept in the named volumes)
+#   docker compose down -v           # stop AND delete the data volumes
+#
+# NOTE: stop the per-service dev compose files first (services/*/docker-compose.yml) — this stack
+# runs its own database containers and doesn't publish their ports. The Jwt signing key below is
+# a local-dev value; a real deployment would inject it from a secret store.
+
+name: jobtracker
+
+services:
+  applications-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: applications
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - applications-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d applications"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  users-db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - users-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d users"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  applications-api:
+    build:
+      context: ./services/applications
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__ApplicationsDb: "Host=applications-db;Port=5432;Database=applications;Username=postgres;Password=postgres"
+      RunMigrationsAtStartup: "true"
+    depends_on:
+      applications-db:
+        condition: service_healthy
+
+  users-api:
+    build:
+      context: ./services/users
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__UsersDb: "Host=users-db;Port=5432;Database=users;Username=postgres;Password=postgres"
+      RunMigrationsAtStartup: "true"
+      Jwt__Issuer: jobtracker
+      Jwt__Audience: jobtracker
+      Jwt__ExpiryMinutes: "60"
+      Jwt__SigningKey: "dev-only-compose-signing-key-change-in-production-0123456789abcdef"
+    depends_on:
+      users-db:
+        condition: service_healthy
+
+  gateway:
+    build:
+      context: ./services/gateway
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - applications-api
+      - users-api
+
+volumes:
+  applications-db-data:
+  users-db-data:

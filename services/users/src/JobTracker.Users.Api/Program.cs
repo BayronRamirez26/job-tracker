@@ -2,7 +2,9 @@ using System.Text;
 using JobTracker.Users.Api.Exceptions;
 using JobTracker.Users.Application;
 using JobTracker.Users.Infrastructure;
+using JobTracker.Users.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -71,6 +73,14 @@ builder.Services.AddSwaggerGen(options =>
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+// Apply EF Core migrations on startup when enabled (the orchestrated Docker Compose sets this).
+if (app.Configuration.GetValue<bool>("RunMigrationsAtStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<UsersDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 // --- HTTP pipeline ----------------------------------------------------------------------------
 app.UseExceptionHandler();

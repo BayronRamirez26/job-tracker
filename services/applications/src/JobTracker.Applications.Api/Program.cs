@@ -2,6 +2,8 @@ using System.Text.Json.Serialization;
 using JobTracker.Applications.Api.Exceptions;
 using JobTracker.Applications.Application;
 using JobTracker.Applications.Infrastructure;
+using JobTracker.Applications.Infrastructure.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,15 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+// Apply EF Core migrations on startup when enabled — used by the orchestrated Docker Compose so
+// `docker compose up` initializes the schema. Off for local `dotnet run` (manual `dotnet ef`).
+if (app.Configuration.GetValue<bool>("RunMigrationsAtStartup"))
+{
+    using var scope = app.Services.CreateScope();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationsDbContext>();
+    await db.Database.MigrateAsync();
+}
 
 // --- HTTP pipeline ----------------------------------------------------------------------------
 
