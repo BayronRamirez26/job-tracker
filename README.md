@@ -3,9 +3,9 @@
 A microservices-based system for tracking job applications, built in **.NET 8** as a
 hands-on study of microservices architecture, formal testing, and CI/CD.
 
-> **Status:** Phase 1 — the **Applications Service** is being built as a standalone
-> REST API using Clean Architecture. Other services and the API gateway come in later
-> phases (see [Roadmap](#roadmap)).
+> **Status:** Phases 1–2 complete — the **Applications Service** and the **Users/Auth
+> Service** are built (Clean Architecture, each with its own PostgreSQL and full test suite).
+> The API gateway and remaining services come next (see [Roadmap](#roadmap)).
 
 ---
 
@@ -73,16 +73,16 @@ The dependency-inversion trick: repository *interfaces* live in **Application** 
 job-tracker/
 ├─ global.json                     # pins the .NET 8 SDK
 ├─ services/
-│  └─ applications/                # Applications Service (Phase 1)
-│     ├─ JobTracker.Applications.sln
-│     ├─ src/
-│     │  ├─ JobTracker.Applications.Domain/
-│     │  ├─ JobTracker.Applications.Application/
-│     │  ├─ JobTracker.Applications.Infrastructure/
-│     │  └─ JobTracker.Applications.Api/
-│     └─ tests/
-│        ├─ JobTracker.Applications.UnitTests/
-│        └─ JobTracker.Applications.IntegrationTests/
+│  ├─ applications/                # Applications Service (Phase 1) — CRUD; PostgreSQL on 5432
+│  │  ├─ JobTracker.Applications.sln
+│  │  ├─ docker-compose.yml
+│  │  ├─ src/    Domain · Application · Infrastructure · Api
+│  │  └─ tests/  UnitTests · IntegrationTests
+│  └─ users/                       # Users/Auth Service (Phase 2) — JWT auth; PostgreSQL on 5433
+│     ├─ JobTracker.Users.sln
+│     ├─ docker-compose.yml
+│     ├─ src/    Domain · Application · Infrastructure · Api
+│     └─ tests/  UnitTests · IntegrationTests
 ```
 
 ---
@@ -144,6 +144,30 @@ Interactive docs: **Swagger UI** at `/swagger` (Development environment).
 
 ---
 
+## Users service (Phase 2)
+
+The Users/Auth service uses the same Clean Architecture and runs from `services/users/` with
+its **own** PostgreSQL on **port 5433** (`docker compose up -d` there). Alongside the Phase 1
+setup steps, it needs its connection string and a JWT signing key in user-secrets:
+
+```
+dotnet user-secrets set "ConnectionStrings:UsersDb" "Host=localhost;Port=5433;Database=users;Username=postgres;Password=postgres" --project src/JobTracker.Users.Api
+dotnet user-secrets set "Jwt:SigningKey" "<a long random dev key, 32+ chars>" --project src/JobTracker.Users.Api
+```
+
+Endpoints (JWT bearer; errors as RFC 7807 `ProblemDetails`):
+
+| Verb | Route                  | Purpose                          | Success | Errors    |
+| ---- | ---------------------- | -------------------------------- | ------- | --------- |
+| POST | `/api/auth/register`   | create account                   | 201     | 400, 409  |
+| POST | `/api/auth/login`      | exchange credentials for a token | 200     | 400, 401  |
+| GET  | `/api/users/me`        | current user (**JWT required**)  | 200     | 401       |
+
+Passwords are stored as **PBKDF2** hashes (never plaintext); login failures return a uniform
+`401` to avoid account enumeration.
+
+---
+
 ## Testing
 
 ```
@@ -162,7 +186,8 @@ dotnet test
 
 - [x] **Phase 1 — Applications Service:** standalone REST API, Clean Architecture,
       EF Core + PostgreSQL, validation, proper HTTP status codes, tests. ✅
-- [ ] **Phase 2 — Users/Auth Service.**
+- [x] **Phase 2 — Users/Auth Service:** register/login/me, PBKDF2 hashing, JWT (HS256),
+      its own PostgreSQL, tests. ✅
 - [ ] **Phase 3 — API Gateway (YARP) + Docker Compose orchestration.**
 - [ ] **Phase 4 — AI Service.**
 - [ ] **CI/CD** — GitHub Actions pipeline (build, test, containerize).
