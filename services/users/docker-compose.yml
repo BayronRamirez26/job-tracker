@@ -1,0 +1,30 @@
+# Local development database for the Users service — its OWN PostgreSQL, separate from the
+# Applications service's (database-per-service). It maps host port 5433 so both can run at once
+# (Applications uses 5432). Credentials are local-dev only and safe to commit.
+#
+# Usage (from services/users/):
+#   docker compose up -d      # start PostgreSQL in the background
+#   docker compose down       # stop (data kept in the volume)
+#   docker compose down -v    # stop AND delete the data volume
+
+services:
+  users-db:
+    image: postgres:16
+    container_name: jobtracker-users-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: users
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - users-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d users"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  users-db-data:
