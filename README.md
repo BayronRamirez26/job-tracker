@@ -3,9 +3,9 @@
 A microservices-based system for tracking job applications, built in **.NET 8** as a
 hands-on study of microservices architecture, formal testing, and CI/CD.
 
-> **Status:** Phases 1–2 complete — the **Applications Service** and the **Users/Auth
-> Service** are built (Clean Architecture, each with its own PostgreSQL and full test suite).
-> The API gateway and remaining services come next (see [Roadmap](#roadmap)).
+> **Status:** Phases 1–3 complete — the **Applications** and **Users/Auth** services run behind
+> a **YARP API gateway**, all containerized and orchestrated with Docker Compose. The AI service
+> and CI/CD pipeline come next (see [Roadmap](#roadmap)).
 
 ---
 
@@ -72,17 +72,21 @@ The dependency-inversion trick: repository *interfaces* live in **Application** 
 ```
 job-tracker/
 ├─ global.json                     # pins the .NET 8 SDK
+├─ docker-compose.yml              # Phase 3: orchestrates the whole system
 ├─ services/
-│  ├─ applications/                # Applications Service (Phase 1) — CRUD; PostgreSQL on 5432
+│  ├─ applications/                # Applications Service (Phase 1) — CRUD; PostgreSQL
 │  │  ├─ JobTracker.Applications.sln
-│  │  ├─ docker-compose.yml
+│  │  ├─ Dockerfile · docker-compose.yml
 │  │  ├─ src/    Domain · Application · Infrastructure · Api
 │  │  └─ tests/  UnitTests · IntegrationTests
-│  └─ users/                       # Users/Auth Service (Phase 2) — JWT auth; PostgreSQL on 5433
-│     ├─ JobTracker.Users.sln
-│     ├─ docker-compose.yml
-│     ├─ src/    Domain · Application · Infrastructure · Api
-│     └─ tests/  UnitTests · IntegrationTests
+│  ├─ users/                       # Users/Auth Service (Phase 2) — JWT auth; PostgreSQL
+│  │  ├─ JobTracker.Users.sln
+│  │  ├─ Dockerfile · docker-compose.yml
+│  │  ├─ src/    Domain · Application · Infrastructure · Api
+│  │  └─ tests/  UnitTests · IntegrationTests
+│  └─ gateway/                     # API Gateway (Phase 3) — YARP reverse proxy
+│     ├─ JobTracker.Gateway.sln · Dockerfile
+│     └─ src/JobTracker.Gateway/
 ```
 
 ---
@@ -168,6 +172,28 @@ Passwords are stored as **PBKDF2** hashes (never plaintext); login failures retu
 
 ---
 
+## Running the whole system (Docker Compose)
+
+Phase 3 adds a **YARP API gateway** and a top-level `docker-compose.yml` that builds and runs
+every piece together — both databases, both service APIs, and the gateway — on one network:
+
+```
+docker compose up --build
+```
+
+Only the **gateway** is published, at **http://localhost:8080**, and it routes by path:
+
+| Through the gateway               | Goes to      |
+| --------------------------------- | ------------ |
+| `/api/auth/*`, `/api/users/*`     | Users        |
+| `/api/job-applications/*`         | Applications |
+
+Each service applies its EF migrations on startup (`RunMigrationsAtStartup=true` in the compose),
+so the stack is ready after one command. Stop the per-service dev compose files first to avoid
+duplicate databases. `docker compose down` stops everything (`-v` also clears the data volumes).
+
+---
+
 ## Testing
 
 ```
@@ -188,7 +214,8 @@ dotnet test
       EF Core + PostgreSQL, validation, proper HTTP status codes, tests. ✅
 - [x] **Phase 2 — Users/Auth Service:** register/login/me, PBKDF2 hashing, JWT (HS256),
       its own PostgreSQL, tests. ✅
-- [ ] **Phase 3 — API Gateway (YARP) + Docker Compose orchestration.**
+- [x] **Phase 3 — API Gateway (YARP) + Docker Compose orchestration:** one entry point,
+      all services containerized, `docker compose up` runs the whole system. ✅
 - [ ] **Phase 4 — AI Service.**
 - [ ] **CI/CD** — GitHub Actions pipeline (build, test, containerize).
 
