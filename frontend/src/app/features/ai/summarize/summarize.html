@@ -1,0 +1,47 @@
+<section class="panel">
+  <h2>Summarize a job description</h2>
+  <p class="muted intro">
+    Paste a job posting and Claude condenses it into a few bullet points — the company &amp; role,
+    key responsibilities, must-have requirements, and any notable perks or red flags.
+  </p>
+
+  <form (ngSubmit)="summarize()" class="ai-form">
+    <textarea
+      name="jobDescription"
+      [(ngModel)]="jobDescription"
+      [maxlength]="maxLength"
+      rows="12"
+      placeholder="Paste the full job description here…"
+      [disabled]="loading()"></textarea>
+
+    <div class="form-foot">
+      <span class="muted count">{{ jobDescription.length }} / {{ maxLength }}</span>
+      <div class="actions">
+        <button type="button" (click)="clear()" [disabled]="loading()">Clear</button>
+        <button type="submit" [disabled]="loading() || jobDescription.trim().length === 0">
+          {{ loading() ? 'Summarizing…' : 'Summarize' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</section>
+
+@if (error()) {
+  <section class="panel">
+    <p class="error">{{ error() }}</p>
+  </section>
+}
+
+@if (result(); as r) {
+  <section class="panel">
+    <div class="panel-head">
+      <h2>Summary</h2>
+      <span class="badge">{{ r.model }}</span>
+    </div>
+    <ul class="bullets">
+      @for (bullet of bullets(); track $index) {
+        <li>{{ bullet }}</li>
+      }
+    </ul>
+  </section>
+}
