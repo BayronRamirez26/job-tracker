@@ -1,5 +1,7 @@
 # Job Application Tracker
 
+[![CI](https://github.com/BayronRamirez26/job-tracker/actions/workflows/ci.yml/badge.svg)](https://github.com/BayronRamirez26/job-tracker/actions/workflows/ci.yml)
+
 A microservices-based system for tracking job applications, built in **.NET 8** as a
 hands-on study of microservices architecture, formal testing, and CI/CD.
 
