@@ -28,6 +28,10 @@ jobs:
         working-directory: services/users
         run: dotnet test JobTracker.Users.sln -c Release
 
+      - name: AI — build & test (unit + integration; AI client stubbed, no key needed)
+        working-directory: services/ai
+        run: dotnet test JobTracker.AI.sln -c Release
+
       - name: Gateway — build
         working-directory: services/gateway
         run: dotnet build JobTracker.Gateway.sln -c Release

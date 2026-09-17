@@ -69,6 +69,16 @@ services:
       users-db:
         condition: service_healthy
 
+  ai-api:
+    build:
+      context: ./services/ai
+      dockerfile: Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      Anthropic__Model: claude-opus-5
+      # Sourced from the gitignored .env file (never committed).
+      Anthropic__ApiKey: ${ANTHROPIC_API_KEY}
+
   gateway:
     build:
       context: ./services/gateway
@@ -78,6 +88,7 @@ services:
     depends_on:
       - applications-api
       - users-api
+      - ai-api
 
 volumes:
   applications-db-data:
