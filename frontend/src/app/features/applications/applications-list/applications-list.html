@@ -1,0 +1,69 @@
+<section class="panel">
+  <h2>Add an application</h2>
+  <form (ngSubmit)="create()" #f="ngForm" class="app-form">
+    <div class="row">
+      <label>Company
+        <input name="company" [(ngModel)]="form.company" required autocomplete="off" />
+      </label>
+      <label>Position
+        <input name="position" [(ngModel)]="form.position" required autocomplete="off" />
+      </label>
+    </div>
+    <div class="row">
+      <label>Status
+        <select name="status" [(ngModel)]="form.status">
+          @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+        </select>
+      </label>
+      <label>Source
+        <select name="source" [(ngModel)]="form.source">
+          @for (s of sources; track s) { <option [value]="s">{{ s }}</option> }
+        </select>
+      </label>
+      <label>Applied date
+        <input type="date" name="appliedDate" [(ngModel)]="form.appliedDate" />
+      </label>
+    </div>
+    <label>Notes
+      <textarea name="notes" [(ngModel)]="form.notes" rows="2"></textarea>
+    </label>
+    <button type="submit" [disabled]="!f.form.valid">Add application</button>
+  </form>
+</section>
+
+<section class="panel">
+  <div class="panel-head">
+    <h2>Your applications</h2>
+    <button (click)="load()">Refresh</button>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else if (applications().length === 0) {
+    <p class="muted">No applications yet — add one above.</p>
+  } @else {
+    <table class="apps">
+      <thead>
+        <tr>
+          <th>Company</th><th>Position</th><th>Status</th><th>Source</th><th>Applied</th><th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (app of applications(); track app.id) {
+          <tr>
+            <td>{{ app.company }}</td>
+            <td>{{ app.position }}</td>
+            <td><span class="badge">{{ app.status }}</span></td>
+            <td>{{ app.source }}</td>
+            <td>{{ app.appliedDate ?? '—' }}</td>
+            <td><button class="danger" (click)="remove(app)">Delete</button></td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>

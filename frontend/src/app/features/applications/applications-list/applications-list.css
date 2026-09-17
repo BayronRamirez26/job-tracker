@@ -1,0 +1,64 @@
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.1rem 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.panel h2 { margin: 0 0 0.9rem; font-size: 1rem; }
+
+.panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.9rem;
+}
+.panel-head h2 { margin: 0; }
+
+.app-form { display: flex; flex-direction: column; gap: 0.75rem; }
+.app-form .row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.app-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+  flex: 1;
+  min-width: 150px;
+}
+.app-form textarea { resize: vertical; }
+.app-form button { align-self: flex-start; }
+
+table.apps { width: 100%; border-collapse: collapse; }
+table.apps th, table.apps td {
+  text-align: left;
+  padding: 0.5rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+}
+table.apps th {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.1rem 0.55rem;
+  border-radius: 999px;
+  background: #eef2f7;
+  font-size: 0.78rem;
+}
+
+.muted { color: var(--muted); }
+
+.error {
+  color: var(--danger);
+  background: #fdecec;
+  border: 1px solid #f5c6c6;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+}
