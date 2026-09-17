@@ -1,0 +1,21 @@
+<section class="auth-card">
+  <h2>Log in</h2>
+  <form (ngSubmit)="submit()" #f="ngForm" class="auth-form">
+    <label>Email
+      <input type="email" name="email" [(ngModel)]="email" required autocomplete="username" />
+    </label>
+    <label>Password
+      <input type="password" name="password" [(ngModel)]="password" required autocomplete="current-password" />
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button type="submit" [disabled]="loading() || !f.form.valid">
+      {{ loading() ? 'Signing in…' : 'Log in' }}
+    </button>
+  </form>
+
+  <p class="alt">No account? <a routerLink="/register">Create one</a></p>
+</section>

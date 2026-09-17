@@ -3,7 +3,20 @@
   <nav>
     <a routerLink="/applications">Applications</a>
     <a routerLink="/summarize">AI Summarize</a>
+    @if (isAuthenticated()) {
+      <a routerLink="/profile">Profile</a>
+    }
   </nav>
+
+  <div class="session">
+    @if (isAuthenticated()) {
+      <span class="who">Signed in as <strong>{{ user()!.displayName }}</strong></span>
+      <button (click)="logout()">Log out</button>
+    } @else {
+      <a routerLink="/login">Log in</a>
+      <a routerLink="/register">Register</a>
+    }
+  </div>
 </header>
 
 <main class="app-main">

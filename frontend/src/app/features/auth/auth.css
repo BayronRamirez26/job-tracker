@@ -1,0 +1,39 @@
+/* Shared styling for the login and register cards. */
+.auth-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.5rem;
+  max-width: 400px;
+  margin: 2rem auto;
+}
+
+.auth-card h2 { margin: 0 0 1.1rem; font-size: 1.15rem; }
+
+.auth-form { display: flex; flex-direction: column; gap: 0.9rem; }
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+.auth-form .hint { font-size: 0.75rem; color: var(--muted); }
+.auth-form button { margin-top: 0.3rem; }
+
+.error {
+  color: var(--danger);
+  background: #fdecec;
+  border: 1px solid #f5c6c6;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+.alt {
+  margin: 1rem 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+  text-align: center;
+}

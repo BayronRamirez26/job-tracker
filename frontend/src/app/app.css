@@ -21,6 +21,18 @@
   font-weight: 600;
 }
 
+.app-header .session {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-header .session .who {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
 .app-main {
   max-width: 900px;
   margin: 1.5rem auto;

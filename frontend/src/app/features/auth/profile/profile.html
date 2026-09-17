@@ -1,0 +1,15 @@
+<section class="panel">
+  <h2>Your profile</h2>
+  @if (user(); as u) {
+    <dl class="profile">
+      <dt>Display name</dt>
+      <dd>{{ u.displayName }}</dd>
+      <dt>Email</dt>
+      <dd>{{ u.email }}</dd>
+      <dt>User ID</dt>
+      <dd class="mono">{{ u.id }}</dd>
+      <dt>Member since</dt>
+      <dd>{{ u.createdAt | date: 'medium' }}</dd>
+    </dl>
+  }
+</section>
