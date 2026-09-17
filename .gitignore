@@ -59,3 +59,11 @@ ehthumbs.db
 Desktop.ini
 $RECYCLE.BIN/
 .DS_Store
+
+# ---------------------------------------------------------------------------
+# Locally-installed tooling / skills (not part of this project).
+# Keep .github/workflows (CI) tracked; ignore the rest.
+# ---------------------------------------------------------------------------
+/.github/skills/
+/.github/agents/
+/.github/hooks/
