@@ -1,3 +1,23 @@
+/* Page header — the confident lead for the surface, the display register of the type
+   scale turned up (same family, no new primitives). */
+.page-head { margin-bottom: 1.6rem; }
+.page-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.page-sub {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 60ch;
+}
+
+/* The list panel takes its name from the page title now, so it only carries its tools. */
+.list-tools { display: flex; justify-content: flex-end; margin-bottom: 0.9rem; }
+
 .app-form { display: flex; flex-direction: column; gap: 0.85rem; }
 .app-form .row { display: flex; gap: 0.85rem; flex-wrap: wrap; }
 /* Label typography + column layout come from the global .field-label role (styles.css);

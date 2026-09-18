@@ -1,3 +1,14 @@
+<header class="page-head">
+  <h1 class="page-title">Your applications</h1>
+  <p class="page-sub">
+    @if (applications().length) {
+      {{ applications().length }} {{ applications().length === 1 ? 'application' : 'applications' }} tracked, from wishlist to offer.
+    } @else {
+      Add your first application to start tracking, from wishlist to offer.
+    }
+  </p>
+</header>
+
 <section class="panel">
   <h2>Add an application</h2>
   <form (ngSubmit)="create()" #f="ngForm" class="app-form">
@@ -32,8 +43,7 @@
 </section>
 
 <section class="panel">
-  <div class="panel-head">
-    <h2>Your applications</h2>
+  <div class="list-tools">
     <button (click)="load()">Refresh</button>
   </div>
 
