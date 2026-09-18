@@ -11,6 +11,27 @@
 
 <section class="panel">
   <h2>Add an application</h2>
+
+  <div class="smart-add">
+    <label class="smart-title" for="smart-jd">Auto-fill from a job description</label>
+    <textarea
+      id="smart-jd"
+      [(ngModel)]="smartText"
+      [ngModelOptions]="{ standalone: true }"
+      rows="3"
+      placeholder="Paste a job posting and let Claude fill the fields below…"
+      [disabled]="extracting()"
+    ></textarea>
+    <button type="button" class="smart-btn" (click)="extract()" [disabled]="extracting() || !smartText.trim()">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+        <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z" />
+      </svg>
+      {{ extracting() ? 'Reading…' : 'Extract details' }}
+    </button>
+  </div>
+
+  <div class="smart-divider"><span>or fill in manually</span></div>
+
   <form (ngSubmit)="create()" #f="ngForm" class="app-form">
     <div class="row">
       <label>Company
@@ -33,6 +54,17 @@
       </label>
       <label>Applied date
         <input type="date" name="appliedDate" [(ngModel)]="form.appliedDate" />
+      </label>
+    </div>
+    <div class="row">
+      <label>Salary min
+        <input type="number" name="salaryMin" [(ngModel)]="salary.min" min="0" inputmode="numeric" autocomplete="off" />
+      </label>
+      <label>Salary max
+        <input type="number" name="salaryMax" [(ngModel)]="salary.max" min="0" inputmode="numeric" autocomplete="off" />
+      </label>
+      <label>Currency
+        <input name="salaryCurrency" [(ngModel)]="salary.currency" maxlength="3" autocomplete="off" />
       </label>
     </div>
     <label>Notes

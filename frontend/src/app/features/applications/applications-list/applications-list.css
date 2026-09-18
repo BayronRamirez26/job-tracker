@@ -43,6 +43,44 @@
 .app-form textarea { resize: vertical; }
 .app-form button { align-self: flex-start; margin-top: 0.15rem; }
 
+/* Smart Add — paste a posting, let the AI fill the fields. */
+.smart-add { display: flex; flex-direction: column; gap: 0.6rem; }
+.smart-add textarea { resize: vertical; }
+.smart-title {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.smart-btn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--control-bg);
+}
+.smart-btn:hover:not(:disabled) { background: var(--primary-tint); }
+.smart-btn svg { flex: none; }
+
+.smart-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0 1.1rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+.smart-divider::before,
+.smart-divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
 /* Loading / empty states read as a deliberate state, not a stray line. */
 .state { margin: 0; padding: 1.75rem 0; text-align: center; }
 
