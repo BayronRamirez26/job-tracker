@@ -28,5 +28,8 @@ internal sealed class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.DisplayName).IsRequired().HasMaxLength(100);
 
         builder.Property(x => x.CreatedAt).IsRequired();
+
+        // The professional profile is stored as a JSONB document — flexible schema, queryable later.
+        builder.Property(x => x.ProfileJson).HasColumnName("profile").HasColumnType("jsonb");
     }
 }
