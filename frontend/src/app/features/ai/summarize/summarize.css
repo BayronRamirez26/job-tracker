@@ -1,6 +1,5 @@
-/* Layout primitives (.panel, .panel-head, .badge, .muted, .error) are global — see styles.css. */
-
-.intro { margin: 0 0 1rem; font-size: 0.9rem; line-height: 1.5; max-width: 68ch; }
+/* Layout primitives (.panel, .panel-head, .badge, .muted, .error) and the page header
+   (.page-head/.page-title/.page-sub) are global — see styles.css. */
 
 .ai-form { display: flex; flex-direction: column; gap: 0.75rem; }
 .ai-form textarea { resize: vertical; min-height: 220px; line-height: 1.5; }

@@ -1,10 +1,12 @@
-<section class="panel">
-  <h2>Summarize a job description</h2>
-  <p class="muted intro">
-    Paste a job posting and Claude condenses it into a few bullet points — the company &amp; role,
-    key responsibilities, must-have requirements, and any notable perks or red flags.
+<header class="page-head">
+  <h1 class="page-title">Summarize a job description</h1>
+  <p class="page-sub">
+    Paste a posting and Claude condenses it into the company &amp; role, key responsibilities,
+    must-have requirements, and any notable perks or red flags.
   </p>
+</header>
 
+<section class="panel">
   <form (ngSubmit)="summarize()" class="ai-form">
     <textarea
       name="jobDescription"

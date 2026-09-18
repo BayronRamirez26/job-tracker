@@ -189,3 +189,20 @@ input::placeholder, textarea::placeholder { color: #98a2b3; }
   flex-direction: column;
   gap: 0.45rem;
 }
+
+/* Page header — the confident lead a full-width surface opens with: the type scale's
+   display register turned up (same family, no new primitives). */
+.page-head { margin-bottom: 1.6rem; }
+.page-title {
+  margin: 0;
+  font-size: clamp(1.75rem, 5vw, 2.15rem);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.page-sub {
+  margin: 0.5rem 0 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  max-width: 60ch;
+}
