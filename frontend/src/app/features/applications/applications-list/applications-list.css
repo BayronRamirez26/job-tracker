@@ -37,7 +37,7 @@ table.apps thead th {
   letter-spacing: 0.05em;
 }
 table.apps tbody tr { transition: background-color 0.12s ease; }
-table.apps tbody tr:hover { background: #f7f9fb; }
+table.apps tbody tr:hover { background: var(--surface-hover); }
 table.apps tbody tr:last-child td { border-bottom: none; }
 
 table.apps td.strong { font-weight: 600; }

@@ -7,6 +7,7 @@ import {
   JobApplication,
 } from '../../../models/job-application';
 import { ApplicationsService } from '../../../services/applications.service';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-applications-list',
@@ -16,6 +17,7 @@ import { ApplicationsService } from '../../../services/applications.service';
 })
 export class ApplicationsList {
   private readonly service = inject(ApplicationsService);
+  private readonly toasts = inject(ToastService);
 
   protected readonly statuses = APPLICATION_STATUSES;
   protected readonly sources = APPLICATION_SOURCES;
@@ -54,18 +56,27 @@ export class ApplicationsList {
     };
 
     this.service.create(request).subscribe({
-      next: () => {
+      // Drop the new application straight into the list — no full reload.
+      next: (created) => {
+        this.applications.update((apps) => [created, ...apps]);
         this.form = this.blankForm();
-        this.load();
+        this.toasts.success(`Added ${created.company}.`);
       },
-      error: () => this.error.set('Could not create the application.'),
+      error: () => this.toasts.error('Could not add the application.'),
     });
   }
 
   protected remove(app: JobApplication): void {
+    // Optimistic: remove it now, roll back if the server rejects the delete.
+    const previous = this.applications();
+    this.applications.update((apps) => apps.filter((a) => a.id !== app.id));
+
     this.service.remove(app.id).subscribe({
-      next: () => this.load(),
-      error: () => this.error.set('Could not delete the application.'),
+      next: () => this.toasts.success(`Deleted ${app.company}.`),
+      error: () => {
+        this.applications.set(previous);
+        this.toasts.error('Could not delete the application.');
+      },
     });
   }
 

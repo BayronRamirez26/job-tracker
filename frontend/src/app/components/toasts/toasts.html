@@ -1,0 +1,8 @@
+<div class="toasts" aria-live="polite">
+  @for (t of toasts(); track t.id) {
+    <div class="toast" [attr.data-type]="t.type" role="status" (click)="dismiss(t.id)">
+      <span class="dot" aria-hidden="true"></span>
+      <span class="toast-text">{{ t.text }}</span>
+    </div>
+  }
+</div>

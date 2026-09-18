@@ -1,0 +1,44 @@
+.toasts {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-width: min(360px, calc(100vw - 2rem));
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.65rem 0.85rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  color: var(--text);
+  font-size: 0.875rem;
+  cursor: pointer;
+  animation: toast-in 0.22s ease both;
+}
+
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--muted);
+  flex: none;
+}
+.toast[data-type="success"] .dot { background: var(--st-offer-fg); }
+.toast[data-type="error"] .dot { background: var(--danger); }
+.toast[data-type="info"] .dot { background: var(--primary); }
+
+.toast-text { line-height: 1.4; }
