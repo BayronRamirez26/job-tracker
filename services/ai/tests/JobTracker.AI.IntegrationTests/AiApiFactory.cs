@@ -26,8 +26,16 @@ public sealed class AiApiFactory : WebApplicationFactory<Program>
     private sealed class StubAiCompletionClient : IAiCompletionClient
     {
         public const string StubSummary = "• Stubbed summary bullet";
+        public const string StubExtraction =
+            "{\"company\":\"Acme\",\"position\":\"Backend Engineer\",\"salary\":null,\"notes\":\"Builds services.\"}";
 
+        // The extraction prompt asks for JSON; summarize does not — return whatever that use case expects.
         public Task<AiCompletion> CompleteAsync(string systemPrompt, string userPrompt, CancellationToken cancellationToken = default)
-            => Task.FromResult(new AiCompletion(StubSummary, "stub-model"));
+        {
+            var text = systemPrompt.Contains("JSON", StringComparison.OrdinalIgnoreCase)
+                ? StubExtraction
+                : StubSummary;
+            return Task.FromResult(new AiCompletion(text, "stub-model"));
+        }
     }
 }
