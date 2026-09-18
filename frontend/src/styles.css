@@ -170,3 +170,22 @@ input::placeholder, textarea::placeholder { color: #98a2b3; }
 .badge[data-status="Accepted"]    { background: var(--st-accepted-bg);    color: var(--st-accepted-fg); }
 .badge[data-status="Rejected"]    { background: var(--st-rejected-bg);    color: var(--st-rejected-fg); }
 .badge[data-status="Withdrawn"]   { background: var(--st-withdrawn-bg);   color: var(--st-withdrawn-fg); }
+
+/* Field-label role — one voice for form field names and read-only field lists,
+   shared by the applications form, the auth forms, and the profile list. */
+.app-form label,
+.auth-form label,
+.profile dt {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+/* Label-over-control layout for the forms (the profile list uses a grid instead). */
+.app-form label,
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}

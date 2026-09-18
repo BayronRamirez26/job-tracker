@@ -11,15 +11,16 @@
 
 .auth-card h2 { margin: 0 0 1.25rem; font-size: 1.2rem; font-weight: 600; letter-spacing: -0.015em; }
 
-.auth-form { display: flex; flex-direction: column; gap: 0.9rem; }
-.auth-form label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  font-size: 0.8rem;
+.auth-form { display: flex; flex-direction: column; gap: 1rem; }
+/* .auth-form label uses the global .field-label role (styles.css). */
+.auth-form .hint {
+  /* The hint sits inside the label, so opt it back out of the uppercase label voice. */
+  font-size: 0.75rem;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-transform: none;
   color: var(--muted);
 }
-.auth-form .hint { font-size: 0.75rem; color: var(--muted); }
 .auth-form button { margin-top: 0.3rem; }
 
 .alt {
