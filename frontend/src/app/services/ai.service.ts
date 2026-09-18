@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ExtractRequest, ExtractionResponse } from '../models/extraction';
+import { CvProfileResponse } from '../models/profile';
 import { SummarizeRequest, SummaryResponse } from '../models/summary';
 
 /// Talks to the AI service through the gateway. The '/api' prefix is proxied to
@@ -19,5 +20,9 @@ export class AiService {
   extract(jobDescription: string): Observable<ExtractionResponse> {
     const request: ExtractRequest = { jobDescription };
     return this.http.post<ExtractionResponse>(`${this.baseUrl}/extract`, request);
+  }
+
+  parseCv(cv: string): Observable<CvProfileResponse> {
+    return this.http.post<CvProfileResponse>(`${this.baseUrl}/parse-cv`, { cv });
   }
 }

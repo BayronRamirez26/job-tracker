@@ -1,6 +1,6 @@
-/* .panel is global — see styles.css. */
-.panel { max-width: 520px; }
+/* .panel and .profile dt (field-label role) are global — see styles.css. */
 
+/* Account list */
 .profile {
   display: grid;
   grid-template-columns: max-content 1fr;
@@ -8,10 +8,84 @@
   align-items: baseline;
   margin: 0;
 }
-/* .profile dt uses the global .field-label role (styles.css). */
 .profile dd { margin: 0; }
 .mono {
   font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   font-size: 0.85rem;
   font-variant-numeric: tabular-nums;
 }
+
+/* CV builder */
+.cv-builder {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+.cv-builder textarea { resize: vertical; }
+.cv-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.cv-actions { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+.build-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--control-bg);
+}
+.build-btn:hover:not(:disabled) { background: var(--primary-tint); }
+.build-btn svg { flex: none; }
+
+/* Rendered profile */
+.profile-view {
+  border-top: 1px solid var(--border);
+  padding-top: 1.2rem;
+}
+.pv-name { margin: 0; font-size: 1.25rem; font-weight: 700; letter-spacing: -0.02em; }
+.pv-headline { margin: 0.15rem 0 0; color: var(--primary); font-weight: 600; font-size: 0.95rem; }
+.pv-meta { margin: 0.35rem 0 0; font-size: 0.85rem; }
+.pv-summary { margin: 0.8rem 0 0; line-height: 1.55; max-width: 65ch; }
+
+.pv-block { margin-top: 1.3rem; }
+.pv-block h4 {
+  margin: 0 0 0.6rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0; padding: 0; list-style: none; }
+.chips li {
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-pill);
+  background: var(--st-wishlist-bg);
+  color: var(--st-wishlist-fg);
+  font-size: 0.78rem;
+}
+
+.pv-item { margin-bottom: 0.9rem; }
+.pv-item:last-child { margin-bottom: 0; }
+.pv-item-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.pv-item-title { font-weight: 600; font-size: 0.9rem; }
+.pv-item-period { font-size: 0.8rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.pv-highlights { margin: 0.35rem 0 0; padding-left: 1.1rem; }
+.pv-highlights li { margin: 0.2rem 0; line-height: 1.5; font-size: 0.9rem; }
+
+.pv-edu { font-size: 0.9rem; margin-bottom: 0.35rem; }
+
+.pv-links { margin: 0; padding-left: 1.1rem; }
+.pv-links li { margin: 0.2rem 0; font-size: 0.9rem; word-break: break-all; }
