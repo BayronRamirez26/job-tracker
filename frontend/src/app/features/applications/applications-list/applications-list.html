@@ -12,12 +12,12 @@
     <div class="row">
       <label>Status
         <select name="status" [(ngModel)]="form.status">
-          @for (s of statuses; track s) { <option [value]="s">{{ s }}</option> }
+          @for (s of statuses; track s) { <option [value]="s">{{ humanize(s) }}</option> }
         </select>
       </label>
       <label>Source
         <select name="source" [(ngModel)]="form.source">
-          @for (s of sources; track s) { <option [value]="s">{{ s }}</option> }
+          @for (s of sources; track s) { <option [value]="s">{{ humanize(s) }}</option> }
         </select>
       </label>
       <label>Applied date
@@ -42,28 +42,30 @@
   }
 
   @if (loading()) {
-    <p class="muted">Loading…</p>
+    <p class="muted state">Loading…</p>
   } @else if (applications().length === 0) {
-    <p class="muted">No applications yet — add one above.</p>
+    <p class="muted state">No applications yet — add your first one above.</p>
   } @else {
-    <table class="apps">
-      <thead>
-        <tr>
-          <th>Company</th><th>Position</th><th>Status</th><th>Source</th><th>Applied</th><th></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (app of applications(); track app.id) {
+    <div class="table-wrap">
+      <table class="apps">
+        <thead>
           <tr>
-            <td>{{ app.company }}</td>
-            <td>{{ app.position }}</td>
-            <td><span class="badge">{{ app.status }}</span></td>
-            <td>{{ app.source }}</td>
-            <td>{{ app.appliedDate ?? '—' }}</td>
-            <td><button class="danger" (click)="remove(app)">Delete</button></td>
+            <th>Company</th><th>Position</th><th>Status</th><th>Source</th><th>Applied</th><th></th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (app of applications(); track app.id) {
+            <tr>
+              <td class="strong">{{ app.company }}</td>
+              <td>{{ app.position }}</td>
+              <td><span class="badge" [attr.data-status]="app.status">{{ humanize(app.status) }}</span></td>
+              <td>{{ humanize(app.source) }}</td>
+              <td class="tnum">{{ app.appliedDate ?? '—' }}</td>
+              <td class="actions"><button class="danger" (click)="remove(app)">Delete</button></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
   }
 </section>

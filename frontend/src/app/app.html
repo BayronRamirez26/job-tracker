@@ -1,10 +1,10 @@
 <header class="app-header">
   <h1>Job Application Tracker</h1>
   <nav>
-    <a routerLink="/applications">Applications</a>
-    <a routerLink="/summarize">AI Summarize</a>
+    <a routerLink="/applications" routerLinkActive="active">Applications</a>
+    <a routerLink="/summarize" routerLinkActive="active">AI Summarize</a>
     @if (isAuthenticated()) {
-      <a routerLink="/profile">Profile</a>
+      <a routerLink="/profile" routerLinkActive="active">Profile</a>
     }
   </nav>
 

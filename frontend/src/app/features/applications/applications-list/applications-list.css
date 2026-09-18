@@ -1,64 +1,43 @@
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1.1rem 1.25rem;
-  margin-bottom: 1.25rem;
-}
-
-.panel h2 { margin: 0 0 0.9rem; font-size: 1rem; }
-
-.panel-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.9rem;
-}
-.panel-head h2 { margin: 0; }
-
-.app-form { display: flex; flex-direction: column; gap: 0.75rem; }
-.app-form .row { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+.app-form { display: flex; flex-direction: column; gap: 0.85rem; }
+.app-form .row { display: flex; gap: 0.85rem; flex-wrap: wrap; }
 .app-form label {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.3rem;
   font-size: 0.8rem;
   color: var(--muted);
   flex: 1;
   min-width: 150px;
 }
 .app-form textarea { resize: vertical; }
-.app-form button { align-self: flex-start; }
+.app-form button { align-self: flex-start; margin-top: 0.15rem; }
 
-table.apps { width: 100%; border-collapse: collapse; }
+.state { margin: 0.25rem 0; }
+
+/* Table scrolls inside its own box on narrow screens instead of clipping the page. */
+.table-wrap { overflow-x: auto; }
+
+table.apps { width: 100%; border-collapse: collapse; min-width: 560px; }
 table.apps th, table.apps td {
   text-align: left;
-  padding: 0.5rem 0.6rem;
+  padding: 0.6rem 0.7rem;
   border-bottom: 1px solid var(--border);
   font-size: 0.9rem;
+  vertical-align: middle;
 }
-table.apps th {
+table.apps thead th {
+  padding-top: 0;
   color: var(--muted);
   font-weight: 600;
-  font-size: 0.76rem;
+  font-size: 0.72rem;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
+table.apps tbody tr { transition: background-color 0.12s ease; }
+table.apps tbody tr:hover { background: #f7f9fb; }
+table.apps tbody tr:last-child td { border-bottom: none; }
 
-.badge {
-  display: inline-block;
-  padding: 0.1rem 0.55rem;
-  border-radius: 999px;
-  background: #eef2f7;
-  font-size: 0.78rem;
-}
-
-.muted { color: var(--muted); }
-
-.error {
-  color: var(--danger);
-  background: #fdecec;
-  border: 1px solid #f5c6c6;
-  padding: 0.5rem 0.7rem;
-  border-radius: 6px;
-}
+table.apps td.strong { font-weight: 600; }
+table.apps td.tnum { font-variant-numeric: tabular-nums; color: var(--muted); }
+table.apps td.actions { text-align: right; white-space: nowrap; }
+table.apps td.actions button { padding: 0.3rem 0.6rem; font-size: 0.85rem; }

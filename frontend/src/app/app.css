@@ -1,40 +1,73 @@
 .app-header {
   background: #fff;
   border-bottom: 1px solid var(--border);
-  padding: 0.9rem 1.5rem;
+  box-shadow: var(--shadow-sm);
+  padding: 0.8rem 1.5rem;
   display: flex;
-  align-items: baseline;
-  gap: 1.5rem;
+  align-items: center;
+  gap: 0.75rem 1.5rem;
+  flex-wrap: wrap;
 }
 
 .app-header h1 {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
+  font-weight: 600;
   margin: 0;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
 }
 
 .app-header nav {
   display: flex;
-  gap: 1.25rem;
+  gap: 0.25rem;
+  flex-wrap: wrap;
 }
 
 .app-header nav a {
-  font-weight: 600;
+  font-weight: 500;
+  color: var(--muted);
+  padding: 0.35rem 0.6rem;
+  border-radius: var(--radius);
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+.app-header nav a:hover {
+  color: var(--text);
+  background: #f2f4f7;
+  text-decoration: none;
+}
+.app-header nav a.active {
+  color: var(--primary);
+  background: var(--primary-tint);
 }
 
 .app-header .session {
   margin-left: auto;
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 0.9rem;
 }
-
 .app-header .session .who {
   font-size: 0.85rem;
   color: var(--muted);
+  white-space: nowrap;
 }
 
 .app-main {
   max-width: 900px;
-  margin: 1.5rem auto;
+  margin: 1.75rem auto;
   padding: 0 1rem;
+}
+
+@media (max-width: 560px) {
+  .app-header {
+    padding: 0.75rem 1rem;
+    gap: 0.5rem 1rem;
+  }
+  /* Give the session block its own full-width row so nothing clips on a phone. */
+  .app-header .session {
+    margin-left: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .app-main { margin: 1.25rem auto; }
 }

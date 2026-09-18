@@ -1,44 +1,7 @@
-/* Layout primitives (kept local so this component is self-contained; these mirror the
-   ones in applications-list.css — worth promoting to global styles later if a third view
-   needs them). */
-.panel {
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 1.1rem 1.25rem;
-  margin-bottom: 1.25rem;
-}
-.panel h2 { margin: 0 0 0.9rem; font-size: 1rem; }
+/* Layout primitives (.panel, .panel-head, .badge, .muted, .error) are global — see styles.css. */
 
-.panel-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.6rem;
-}
-.panel-head h2 { margin: 0; }
+.intro { margin: 0 0 1rem; font-size: 0.9rem; line-height: 1.5; max-width: 68ch; }
 
-.badge {
-  display: inline-block;
-  padding: 0.1rem 0.55rem;
-  border-radius: 999px;
-  background: #eef2f7;
-  font-size: 0.78rem;
-}
-
-.muted { color: var(--muted); }
-.intro { margin: 0 0 1rem; font-size: 0.9rem; line-height: 1.5; }
-
-.error {
-  color: var(--danger);
-  background: #fdecec;
-  border: 1px solid #f5c6c6;
-  padding: 0.5rem 0.7rem;
-  border-radius: 6px;
-  margin: 0;
-}
-
-/* Panel-specific */
 .ai-form { display: flex; flex-direction: column; gap: 0.75rem; }
 .ai-form textarea { resize: vertical; min-height: 220px; line-height: 1.5; }
 
@@ -50,7 +13,7 @@
   flex-wrap: wrap;
 }
 .form-foot .actions { display: flex; gap: 0.6rem; }
-.count { font-size: 0.8rem; }
+.count { font-size: 0.8rem; font-variant-numeric: tabular-nums; }
 
-.bullets { margin: 0; padding-left: 1.2rem; }
-.bullets li { margin: 0.4rem 0; line-height: 1.5; }
+.bullets { margin: 0; padding-left: 1.2rem; max-width: 68ch; }
+.bullets li { margin: 0.4rem 0; line-height: 1.55; }
