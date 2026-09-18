@@ -22,6 +22,10 @@ internal sealed class JobApplicationConfiguration : IEntityTypeConfiguration<Job
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
 
+        // Owner (the authenticated user's 'sub'). Indexed because every query filters by it.
+        builder.Property(x => x.UserId).IsRequired();
+        builder.HasIndex(x => x.UserId);
+
         builder.Property(x => x.Company)
             .IsRequired()
             .HasMaxLength(200);

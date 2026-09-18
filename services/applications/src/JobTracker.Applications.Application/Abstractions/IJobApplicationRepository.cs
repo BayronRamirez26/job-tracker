@@ -15,9 +15,10 @@ namespace JobTracker.Applications.Application.Abstractions;
 /// </remarks>
 public interface IJobApplicationRepository
 {
-    Task<JobApplication?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
+    // Reads are scoped to the owner, so one user can never load another user's application.
+    Task<JobApplication?> GetByIdAsync(Guid userId, Guid id, CancellationToken cancellationToken = default);
 
-    Task<IReadOnlyList<JobApplication>> ListAsync(CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<JobApplication>> ListAsync(Guid userId, CancellationToken cancellationToken = default);
 
     Task AddAsync(JobApplication application, CancellationToken cancellationToken = default);
 

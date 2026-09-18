@@ -18,11 +18,13 @@ internal sealed class JobApplicationRepository : IJobApplicationRepository
         _context = context;
     }
 
-    public async Task<JobApplication?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
-        => await _context.JobApplications.FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
-
-    public async Task<IReadOnlyList<JobApplication>> ListAsync(CancellationToken cancellationToken = default)
+    public async Task<JobApplication?> GetByIdAsync(Guid userId, Guid id, CancellationToken cancellationToken = default)
         => await _context.JobApplications
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId, cancellationToken);
+
+    public async Task<IReadOnlyList<JobApplication>> ListAsync(Guid userId, CancellationToken cancellationToken = default)
+        => await _context.JobApplications
+            .Where(x => x.UserId == userId)
             .OrderByDescending(x => x.CreatedAt)
             .ToListAsync(cancellationToken);
 

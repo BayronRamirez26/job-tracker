@@ -24,6 +24,11 @@ Deferred work for the Job Application Tracker, roughly in priority order.
 ## Frontend
 
 - [ ] Edit an existing application (currently list / create / delete only).
-- [ ] Salary-range fields in the create/edit form.
+- [x] Salary-range fields in the create form. *(done alongside Smart Add)*
 - [ ] Filter the applications list by status.
 - [ ] Add the frontend to CI (build + lint; CI currently covers only the .NET services).
+
+## Ops / infra
+
+- [ ] Verify the Postgres volumes are **named** so data survives `docker compose down`
+  (containers showed as "Recreated" on restarts — worth confirming the volumes persist).

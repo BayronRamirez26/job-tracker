@@ -28,6 +28,7 @@ public sealed class JobApplication
 
     private JobApplication(
         Guid id,
+        Guid userId,
         string company,
         string position,
         ApplicationStatus status,
@@ -39,6 +40,7 @@ public sealed class JobApplication
         DateTimeOffset updatedAt)
     {
         Id = id;
+        UserId = userId;
         Company = company;
         Position = position;
         Status = status;
@@ -51,6 +53,9 @@ public sealed class JobApplication
     }
 
     public Guid Id { get; private set; }
+
+    /// <summary>The owner of this application (the 'sub' of the authenticated user). Set once.</summary>
+    public Guid UserId { get; private set; }
 
     public string Company { get; private set; } = null!;
 
@@ -73,8 +78,9 @@ public sealed class JobApplication
     /// <summary>When the record was last modified (UTC).</summary>
     public DateTimeOffset UpdatedAt { get; private set; }
 
-    /// <summary>Creates a new, valid job application.</summary>
+    /// <summary>Creates a new, valid job application owned by <paramref name="userId"/>.</summary>
     public static JobApplication Create(
+        Guid userId,
         string company,
         string position,
         ApplicationStatus status,
@@ -83,10 +89,16 @@ public sealed class JobApplication
         string? notes = null,
         SalaryRange? salary = null)
     {
+        if (userId == Guid.Empty)
+        {
+            throw new DomainException("An owner is required.");
+        }
+
         var now = DateTimeOffset.UtcNow;
 
         return new JobApplication(
             id: Guid.NewGuid(),
+            userId: userId,
             company: NormalizeRequired(company, nameof(company)),
             position: NormalizeRequired(position, nameof(position)),
             status: status,

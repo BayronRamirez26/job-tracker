@@ -31,12 +31,14 @@ public sealed class JobApplicationService : IJobApplicationService
     }
 
     public async Task<JobApplicationResponse> CreateAsync(
+        Guid userId,
         CreateJobApplicationRequest request,
         CancellationToken cancellationToken = default)
     {
         await _createValidator.ValidateAndThrowAsync(request, cancellationToken);
 
         var application = JobApplication.Create(
+            userId,
             request.Company,
             request.Position,
             request.Status,
@@ -51,29 +53,30 @@ public sealed class JobApplicationService : IJobApplicationService
         return application.ToResponse();
     }
 
-    public async Task<JobApplicationResponse> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task<JobApplicationResponse> GetByIdAsync(Guid userId, Guid id, CancellationToken cancellationToken = default)
     {
-        var application = await _repository.GetByIdAsync(id, cancellationToken)
+        var application = await _repository.GetByIdAsync(userId, id, cancellationToken)
             ?? throw NotFoundException.For<JobApplication>(id);
 
         return application.ToResponse();
     }
 
-    public async Task<IReadOnlyList<JobApplicationResponse>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<JobApplicationResponse>> GetAllAsync(Guid userId, CancellationToken cancellationToken = default)
     {
-        var applications = await _repository.ListAsync(cancellationToken);
+        var applications = await _repository.ListAsync(userId, cancellationToken);
 
         return applications.Select(application => application.ToResponse()).ToList();
     }
 
     public async Task<JobApplicationResponse> UpdateAsync(
+        Guid userId,
         Guid id,
         UpdateJobApplicationRequest request,
         CancellationToken cancellationToken = default)
     {
         await _updateValidator.ValidateAndThrowAsync(request, cancellationToken);
 
-        var application = await _repository.GetByIdAsync(id, cancellationToken)
+        var application = await _repository.GetByIdAsync(userId, id, cancellationToken)
             ?? throw NotFoundException.For<JobApplication>(id);
 
         // Two intents, two methods: descriptive edits, then the lifecycle change.
@@ -92,9 +95,9 @@ public sealed class JobApplicationService : IJobApplicationService
         return application.ToResponse();
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
+    public async Task DeleteAsync(Guid userId, Guid id, CancellationToken cancellationToken = default)
     {
-        var application = await _repository.GetByIdAsync(id, cancellationToken)
+        var application = await _repository.GetByIdAsync(userId, id, cancellationToken)
             ?? throw NotFoundException.For<JobApplication>(id);
 
         _repository.Remove(application);

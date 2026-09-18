@@ -49,6 +49,10 @@ services:
       ASPNETCORE_ENVIRONMENT: Development
       ConnectionStrings__ApplicationsDb: "Host=applications-db;Port=5432;Database=applications;Username=postgres;Password=postgres"
       RunMigrationsAtStartup: "true"
+      # Same JWT settings as users-api so this service trusts the token the Users service issues.
+      Jwt__Issuer: jobtracker
+      Jwt__Audience: jobtracker
+      Jwt__SigningKey: "dev-only-compose-signing-key-change-in-production-0123456789abcdef"
     depends_on:
       applications-db:
         condition: service_healthy
