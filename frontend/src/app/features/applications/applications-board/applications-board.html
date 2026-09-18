@@ -1,0 +1,28 @@
+<div class="board" cdkDropListGroup>
+  @for (col of columns(); track col.status) {
+    <section class="column">
+      <header class="column-head">
+        <span class="dot" [attr.data-status]="col.status" aria-hidden="true"></span>
+        <span class="column-title">{{ humanize(col.status) }}</span>
+        <span class="column-count">{{ col.apps.length }}</span>
+      </header>
+
+      <div
+        class="cards"
+        cdkDropList
+        [cdkDropListData]="col.apps"
+        (cdkDropListDropped)="drop($event, col.status)"
+      >
+        @for (app of col.apps; track app.id) {
+          <article class="card" cdkDrag [cdkDragData]="app">
+            <div class="company">{{ app.company }}</div>
+            <div class="position">{{ app.position }}</div>
+            <div class="meta">{{ humanize(app.source) }}@if (app.appliedDate) { · {{ app.appliedDate }}}</div>
+          </article>
+        } @empty {
+          <p class="empty">Drop here</p>
+        }
+      </div>
+    </section>
+  }
+</div>

@@ -187,6 +187,18 @@ input::placeholder, textarea::placeholder { color: var(--placeholder); }
 }
 .page-head, .panel { animation: rise 0.28s ease both; }
 
+/* CDK drag-and-drop (board). The floating preview lives in an overlay on <body>, so these
+   must be global; it inherits the themed tokens from :root. */
+.cdk-drag-preview {
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+}
+.cdk-drag-placeholder { opacity: 0.35; }
+.cdk-drag-animating { transition: transform 0.18s cubic-bezier(0, 0, 0.2, 1); }
+.cards.cdk-drop-list-dragging .card:not(.cdk-drag-placeholder) {
+  transition: transform 0.18s cubic-bezier(0, 0, 0.2, 1);
+}
+
 /* ---------------------------------------------------------------------------
    Shared layout primitives, used across every feature surface.
    (Promoted here so a panel is defined once, not copied per component.)

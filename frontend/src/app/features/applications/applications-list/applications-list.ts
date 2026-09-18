@@ -6,45 +6,51 @@ import {
   CreateJobApplicationRequest,
   JobApplication,
 } from '../../../models/job-application';
-import { ApplicationsService } from '../../../services/applications.service';
-import { ToastService } from '../../../services/toast.service';
+import { ApplicationsStore } from '../../../services/applications-store';
+import { humanize } from '../../../shared/humanize';
+import { ApplicationsBoard } from '../applications-board/applications-board';
+
+type View = 'table' | 'board';
+const VIEW_KEY = 'jobtracker.appsView';
 
 @Component({
   selector: 'app-applications-list',
-  imports: [FormsModule],
+  imports: [FormsModule, ApplicationsBoard],
   templateUrl: './applications-list.html',
   styleUrl: './applications-list.css',
 })
 export class ApplicationsList {
-  private readonly service = inject(ApplicationsService);
-  private readonly toasts = inject(ToastService);
+  private readonly store = inject(ApplicationsStore);
 
   protected readonly statuses = APPLICATION_STATUSES;
   protected readonly sources = APPLICATION_SOURCES;
 
-  protected readonly applications = signal<JobApplication[]>([]);
-  protected readonly loading = signal(false);
-  protected readonly error = signal<string | null>(null);
+  // State lives in the shared store, so the table and board never disagree.
+  protected readonly applications = this.store.applications;
+  protected readonly loading = this.store.loading;
+  protected readonly error = this.store.error;
+
+  protected readonly view = signal<View>(this.initialView());
 
   protected form: CreateJobApplicationRequest = this.blankForm();
 
+  protected readonly humanize = humanize;
+
   constructor() {
-    this.load();
+    this.store.load();
+  }
+
+  protected setView(view: View): void {
+    this.view.set(view);
+    try {
+      localStorage.setItem(VIEW_KEY, view);
+    } catch {
+      /* ignore */
+    }
   }
 
   protected load(): void {
-    this.loading.set(true);
-    this.error.set(null);
-    this.service.list().subscribe({
-      next: (apps) => {
-        this.applications.set(apps);
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Could not load applications. Is the API gateway running on :8080?');
-        this.loading.set(false);
-      },
-    });
+    this.store.load();
   }
 
   protected create(): void {
@@ -54,37 +60,13 @@ export class ApplicationsList {
       appliedDate: this.form.appliedDate || null,
       notes: this.form.notes || null,
     };
-
-    this.service.create(request).subscribe({
-      // Drop the new application straight into the list — no full reload.
-      next: (created) => {
-        this.applications.update((apps) => [created, ...apps]);
-        this.form = this.blankForm();
-        this.toasts.success(`Added ${created.company}.`);
-      },
-      error: () => this.toasts.error('Could not add the application.'),
+    this.store.add(request, () => {
+      this.form = this.blankForm();
     });
   }
 
   protected remove(app: JobApplication): void {
-    // Optimistic: remove it now, roll back if the server rejects the delete.
-    const previous = this.applications();
-    this.applications.update((apps) => apps.filter((a) => a.id !== app.id));
-
-    this.service.remove(app.id).subscribe({
-      next: () => this.toasts.success(`Deleted ${app.company}.`),
-      error: () => {
-        this.applications.set(previous);
-        this.toasts.error('Could not delete the application.');
-      },
-    });
-  }
-
-  /** Turn a PascalCase enum value ("PhoneScreen") into a readable label ("Phone Screen"). */
-  protected humanize(value: string): string {
-    // Brand names that aren't really two words.
-    const exceptions: Record<string, string> = { LinkedIn: 'LinkedIn' };
-    return exceptions[value] ?? value.replace(/([a-z])([A-Z])/g, '$1 $2');
+    this.store.remove(app);
   }
 
   private blankForm(): CreateJobApplicationRequest {
@@ -97,5 +79,17 @@ export class ApplicationsList {
       notes: null,
       salary: null,
     };
+  }
+
+  private initialView(): View {
+    try {
+      const v = localStorage.getItem(VIEW_KEY);
+      if (v === 'table' || v === 'board') {
+        return v;
+      }
+    } catch {
+      /* ignore */
+    }
+    return 'table';
   }
 }

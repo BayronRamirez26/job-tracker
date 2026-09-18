@@ -1,0 +1,76 @@
+.board {
+  display: flex;
+  gap: 0.85rem;
+  align-items: flex-start;
+  overflow-x: auto;
+  padding-bottom: 0.75rem;
+}
+
+.column {
+  flex: 0 0 236px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem;
+}
+
+.column-head {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+.column-head .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-pill);
+  background: var(--st-wishlist-fg);
+  flex: none;
+}
+.column-head .dot[data-status="Applied"]     { background: var(--st-applied-fg); }
+.column-head .dot[data-status="PhoneScreen"] { background: var(--st-phonescreen-fg); }
+.column-head .dot[data-status="Interview"]   { background: var(--st-interview-fg); }
+.column-head .dot[data-status="Offer"]       { background: var(--st-offer-fg); }
+.column-head .dot[data-status="Accepted"]    { background: var(--st-accepted-fg); }
+.column-head .dot[data-status="Rejected"]    { background: var(--st-rejected-fg); }
+.column-head .dot[data-status="Withdrawn"]   { background: var(--st-withdrawn-fg); }
+.column-head .column-count {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+}
+
+.cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  min-height: 48px;
+}
+
+.card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 0.6rem 0.7rem;
+  cursor: grab;
+}
+.card:active { cursor: grabbing; }
+.card .company { font-weight: 600; font-size: 0.9rem; }
+.card .position { font-size: 0.85rem; margin-top: 0.1rem; }
+.card .meta { font-size: 0.75rem; color: var(--muted); margin-top: 0.35rem; }
+
+.empty {
+  margin: 0;
+  padding: 0.85rem 0;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--muted);
+  opacity: 0.55;
+}

@@ -42,20 +42,26 @@
   </form>
 </section>
 
-<section class="panel">
-  <div class="list-tools">
-    <button (click)="load()">Refresh</button>
+<div class="view-bar">
+  <div class="view-toggle" role="tablist" aria-label="View">
+    <button type="button" role="tab" [class.active]="view() === 'table'" [attr.aria-selected]="view() === 'table'" (click)="setView('table')">Table</button>
+    <button type="button" role="tab" [class.active]="view() === 'board'" [attr.aria-selected]="view() === 'board'" (click)="setView('board')">Board</button>
   </div>
+  <button (click)="load()">Refresh</button>
+</div>
 
-  @if (error()) {
-    <p class="error">{{ error() }}</p>
-  }
+@if (error()) {
+  <p class="error">{{ error() }}</p>
+}
 
-  @if (loading()) {
-    <p class="muted state">Loading…</p>
-  } @else if (applications().length === 0) {
-    <p class="muted state">No applications yet — add your first one above.</p>
-  } @else {
+@if (loading()) {
+  <p class="muted state">Loading…</p>
+} @else if (applications().length === 0) {
+  <p class="muted state">No applications yet — add your first one above.</p>
+} @else if (view() === 'board') {
+  <app-applications-board />
+} @else {
+  <section class="panel">
     <div class="table-wrap">
       <table class="apps">
         <thead>
@@ -77,5 +83,5 @@
         </tbody>
       </table>
     </div>
-  }
-</section>
+  </section>
+}

@@ -18,6 +18,11 @@ export class ApplicationsService {
     return this.http.post<JobApplication>(this.baseUrl, request);
   }
 
+  // Full update (PUT): the API replaces every editable field, so we send them all.
+  update(id: string, request: CreateJobApplicationRequest): Observable<JobApplication> {
+    return this.http.put<JobApplication>(`${this.baseUrl}/${id}`, request);
+  }
+
   remove(id: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }

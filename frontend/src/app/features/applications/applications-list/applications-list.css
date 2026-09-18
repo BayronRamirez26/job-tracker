@@ -1,7 +1,36 @@
 /* .page-head / .page-title / .page-sub are the global page-header role (styles.css). */
 
-/* The list panel takes its name from the page title now, so it only carries its tools. */
-.list-tools { display: flex; justify-content: flex-end; margin-bottom: 0.9rem; }
+.view-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Segmented control — a recessed track with a raised active tab. */
+.view-toggle {
+  display: inline-flex;
+  gap: 0.2rem;
+  padding: 0.2rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.view-toggle button {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0.3rem 0.8rem;
+  border-radius: 6px;
+  color: var(--muted);
+}
+.view-toggle button:hover { background: var(--control-hover); color: var(--text); }
+.view-toggle button.active {
+  background: var(--panel);
+  color: var(--text);
+  box-shadow: var(--shadow-sm);
+}
 
 .app-form { display: flex; flex-direction: column; gap: 0.85rem; }
 .app-form .row { display: flex; gap: 0.85rem; flex-wrap: wrap; }
