@@ -28,13 +28,29 @@ public sealed class AiApiFactory : WebApplicationFactory<Program>
         public const string StubSummary = "• Stubbed summary bullet";
         public const string StubExtraction =
             "{\"company\":\"Acme\",\"position\":\"Backend Engineer\",\"salary\":null,\"notes\":\"Builds services.\"}";
+        public const string StubProfile =
+            "{\"fullName\":\"Ada Lovelace\",\"headline\":\"Software Engineer\",\"summary\":\"Builds things.\"," +
+            "\"location\":\"Remote\",\"yearsOfExperience\":6,\"skills\":[\"C#\",\".NET\"]," +
+            "\"experience\":[{\"company\":\"Acme\",\"title\":\"Engineer\",\"period\":\"2020-2023\",\"highlights\":[\"Shipped\"]}]," +
+            "\"education\":[{\"institution\":\"MIT\",\"degree\":\"BSc\",\"year\":\"2016\"}],\"links\":[]}";
 
-        // The extraction prompt asks for JSON; summarize does not — return whatever that use case expects.
+        // Each use case names its intent in the system prompt; return the shape it expects.
         public Task<AiCompletion> CompleteAsync(string systemPrompt, string userPrompt, CancellationToken cancellationToken = default)
         {
-            var text = systemPrompt.Contains("JSON", StringComparison.OrdinalIgnoreCase)
-                ? StubExtraction
-                : StubSummary;
+            string text;
+            if (systemPrompt.Contains("professional profile", StringComparison.OrdinalIgnoreCase))
+            {
+                text = StubProfile;
+            }
+            else if (systemPrompt.Contains("job posting", StringComparison.OrdinalIgnoreCase))
+            {
+                text = StubExtraction;
+            }
+            else
+            {
+                text = StubSummary;
+            }
+
             return Task.FromResult(new AiCompletion(text, "stub-model"));
         }
     }

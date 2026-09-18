@@ -1,4 +1,5 @@
 using FluentValidation;
+using JobTracker.AI.Application.Cv;
 using JobTracker.AI.Application.Extraction;
 using JobTracker.AI.Application.Summaries;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public static class DependencyInjection
         services.AddValidatorsFromAssemblyContaining<SummaryService>();
         services.AddScoped<ISummaryService, SummaryService>();
         services.AddScoped<IExtractionService, ExtractionService>();
+        services.AddScoped<ICvService, CvService>();
 
         return services;
     }

@@ -13,5 +13,5 @@ public sealed class AnthropicOptions
 
     public string Model { get; set; } = "claude-opus-5";
 
-    public int MaxTokens { get; set; } = 1024;
+    public int MaxTokens { get; set; } = 2048;
 }
