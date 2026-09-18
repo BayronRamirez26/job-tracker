@@ -12,13 +12,13 @@ export class AiService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = '/api/ai';
 
-  summarize(jobDescription: string): Observable<SummaryResponse> {
-    const request: SummarizeRequest = { jobDescription };
+  summarize(jobDescription: string, candidateProfile: string | null = null): Observable<SummaryResponse> {
+    const request: SummarizeRequest = { jobDescription, candidateProfile };
     return this.http.post<SummaryResponse>(`${this.baseUrl}/summarize`, request);
   }
 
-  extract(jobDescription: string): Observable<ExtractionResponse> {
-    const request: ExtractRequest = { jobDescription };
+  extract(jobDescription: string, candidateProfile: string | null = null): Observable<ExtractionResponse> {
+    const request: ExtractRequest = { jobDescription, candidateProfile };
     return this.http.post<ExtractionResponse>(`${this.baseUrl}/extract`, request);
   }
 

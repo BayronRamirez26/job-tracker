@@ -9,6 +9,7 @@ import {
 } from '../../../models/job-application';
 import { AiService } from '../../../services/ai.service';
 import { ApplicationsStore } from '../../../services/applications-store';
+import { ProfileStore } from '../../../services/profile-store';
 import { ToastService } from '../../../services/toast.service';
 import { humanize } from '../../../shared/humanize';
 import { ApplicationsBoard } from '../applications-board/applications-board';
@@ -31,7 +32,11 @@ const VIEW_KEY = 'jobtracker.appsView';
 export class ApplicationsList {
   private readonly store = inject(ApplicationsStore);
   private readonly ai = inject(AiService);
+  private readonly profiles = inject(ProfileStore);
   private readonly toasts = inject(ToastService);
+
+  // When the user has a saved profile, Smart Add frames the notes around fit for them.
+  protected readonly personalized = this.profiles.hasProfile;
 
   protected readonly statuses = APPLICATION_STATUSES;
   protected readonly sources = APPLICATION_SOURCES;
@@ -75,7 +80,7 @@ export class ApplicationsList {
       return;
     }
     this.extracting.set(true);
-    this.ai.extract(text).subscribe({
+    this.ai.extract(text, this.profiles.asPromptText()).subscribe({
       next: (r) => {
         // Fill only what the model actually found; leave the rest for the user.
         if (r.company) this.form.company = r.company;

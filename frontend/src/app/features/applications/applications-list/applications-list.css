@@ -53,8 +53,8 @@
   text-transform: uppercase;
   color: var(--muted);
 }
+.smart-foot { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 .smart-btn {
-  align-self: flex-start;
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -64,6 +64,7 @@
 }
 .smart-btn:hover:not(:disabled) { background: var(--primary-tint); }
 .smart-btn svg { flex: none; }
+.personalized-tag { font-size: 0.8rem; color: var(--primary); font-weight: 500; }
 
 .smart-divider {
   display: flex;

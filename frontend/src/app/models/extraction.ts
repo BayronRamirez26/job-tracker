@@ -2,6 +2,7 @@
 
 export interface ExtractRequest {
   jobDescription: string;
+  candidateProfile?: string | null;
 }
 
 export interface ExtractedSalary {

@@ -22,12 +22,17 @@
       placeholder="Paste a job posting and let Claude fill the fields below…"
       [disabled]="extracting()"
     ></textarea>
-    <button type="button" class="smart-btn" (click)="extract()" [disabled]="extracting() || !smartText.trim()">
-      <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
-        <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z" />
-      </svg>
-      {{ extracting() ? 'Reading…' : 'Extract details' }}
-    </button>
+    <div class="smart-foot">
+      <button type="button" class="smart-btn" (click)="extract()" [disabled]="extracting() || !smartText.trim()">
+        <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+          <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z" />
+        </svg>
+        {{ extracting() ? 'Reading…' : 'Extract details' }}
+      </button>
+      @if (personalized()) {
+        <span class="personalized-tag">Personalized to your profile</span>
+      }
+    </div>
   </div>
 
   <div class="smart-divider"><span>or fill in manually</span></div>

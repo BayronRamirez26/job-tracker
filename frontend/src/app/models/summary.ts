@@ -3,6 +3,7 @@
 
 export interface SummarizeRequest {
   jobDescription: string;
+  candidateProfile?: string | null;
 }
 
 export interface SummaryResponse {

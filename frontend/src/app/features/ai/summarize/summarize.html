@@ -18,7 +18,9 @@
       [disabled]="loading()"></textarea>
 
     <div class="form-foot">
-      <span class="muted count">{{ jobDescription.length }} / {{ maxLength }}</span>
+      <span class="muted count">
+        {{ jobDescription.length }} / {{ maxLength }}@if (personalized()) {<span class="personalized-tag"> · Personalized to your profile</span>}
+      </span>
       <div class="actions">
         <button type="button" (click)="clear()" [disabled]="loading()">Clear</button>
         <button type="submit" [disabled]="loading() || jobDescription.trim().length === 0">

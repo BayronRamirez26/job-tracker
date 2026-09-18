@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Profile as ProfileModel } from '../../../models/profile';
 import { AiService } from '../../../services/ai.service';
 import { AuthService } from '../../../services/auth.service';
+import { ProfileStore } from '../../../services/profile-store';
 import { ToastService } from '../../../services/toast.service';
 import { UserProfileService } from '../../../services/user-profile.service';
 
@@ -18,6 +19,7 @@ export class Profile {
   private readonly auth = inject(AuthService);
   private readonly ai = inject(AiService);
   private readonly profiles = inject(UserProfileService);
+  private readonly profileStore = inject(ProfileStore);
   private readonly toasts = inject(ToastService);
 
   protected readonly user = this.auth.user;
@@ -71,7 +73,9 @@ export class Profile {
     }
     this.saving.set(true);
     this.profiles.save(p).subscribe({
-      next: () => {
+      next: (saved) => {
+        // Keep the shared store fresh so Summarize / Smart Add personalize to the new profile.
+        this.profileStore.set(saved);
         this.saving.set(false);
         this.dirty.set(false);
         this.toasts.success('Profile saved.');
