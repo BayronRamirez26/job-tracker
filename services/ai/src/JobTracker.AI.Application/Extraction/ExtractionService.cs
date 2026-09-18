@@ -22,7 +22,8 @@ public sealed class ExtractionService : IExtractionService
         "\"position\" (the job title, or null), " +
         "\"salary\" (an object {\"min\": number, \"max\": number, \"currency\": a 3-letter ISO 4217 code} " +
         "when a pay range is stated, otherwise null), and " +
-        "\"notes\" (one short sentence summarising the role's key requirements, or null). " +
+        "\"notes\" (one short sentence — if a CANDIDATE PROFILE is provided, note how the role fits " +
+        "that candidate; otherwise summarise the key requirements — or null). " +
         "Use null for anything not clearly stated. Never invent values.";
 
     private static readonly JsonSerializerOptions JsonOptions = new()
@@ -46,7 +47,11 @@ public sealed class ExtractionService : IExtractionService
 
         var jobDescription = JobDescription.Create(request.JobDescription);
 
-        var completion = await _aiCompletionClient.CompleteAsync(SystemPrompt, jobDescription.Value, cancellationToken);
+        var userPrompt = string.IsNullOrWhiteSpace(request.CandidateProfile)
+            ? jobDescription.Value
+            : $"CANDIDATE PROFILE:\n{request.CandidateProfile.Trim()}\n\nJOB DESCRIPTION:\n{jobDescription.Value}";
+
+        var completion = await _aiCompletionClient.CompleteAsync(SystemPrompt, userPrompt, cancellationToken);
 
         var fields = Parse(completion.Text);
 

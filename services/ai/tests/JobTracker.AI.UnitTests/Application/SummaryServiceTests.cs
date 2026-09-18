@@ -40,4 +40,18 @@ public class SummaryServiceTests
         await Assert.ThrowsAsync<ValidationException>(() => _sut.SummarizeAsync(new SummarizeRequest("")));
         await _ai.DidNotReceive().CompleteAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>());
     }
+
+    [Fact]
+    public async Task SummarizeAsync_passes_the_candidate_profile_into_the_prompt()
+    {
+        _ai.CompleteAsync(Arg.Any<string>(), Arg.Any<string>(), Arg.Any<CancellationToken>())
+            .Returns(new AiCompletion("• Tailored", "claude-opus-5"));
+
+        await _sut.SummarizeAsync(new SummarizeRequest("Backend role.", "Senior .NET engineer, 7 years"));
+
+        await _ai.Received(1).CompleteAsync(
+            Arg.Any<string>(),
+            Arg.Is<string>(user => user.Contains("Senior .NET engineer") && user.Contains("Backend role")),
+            Arg.Any<CancellationToken>());
+    }
 }

@@ -16,7 +16,9 @@ public sealed class SummaryService : ISummaryService
         "You summarize job descriptions for a candidate tracking their applications. " +
         "Produce 3–5 short bullet points covering: the company and role, the key responsibilities, " +
         "the must-have requirements, and any notable perks or red flags. Be factual and concise; " +
-        "never invent details that are not present in the text.";
+        "never invent details that are not present in the text. " +
+        "If a CANDIDATE PROFILE is provided, tailor the summary to that candidate: highlight where " +
+        "the role fits their background and call out any notable gaps.";
 
     private readonly IAiCompletionClient _aiCompletionClient;
     private readonly IValidator<SummarizeRequest> _validator;
@@ -33,8 +35,18 @@ public sealed class SummaryService : ISummaryService
 
         var jobDescription = JobDescription.Create(request.JobDescription);
 
-        var completion = await _aiCompletionClient.CompleteAsync(SystemPrompt, jobDescription.Value, cancellationToken);
+        var userPrompt = BuildUserPrompt(jobDescription.Value, request.CandidateProfile);
+
+        var completion = await _aiCompletionClient.CompleteAsync(SystemPrompt, userPrompt, cancellationToken);
 
         return new SummaryResponse(completion.Text, completion.Model);
+    }
+
+    /// <summary>Frames the job description, prefixed with the candidate profile when one is given.</summary>
+    private static string BuildUserPrompt(string jobDescription, string? candidateProfile)
+    {
+        return string.IsNullOrWhiteSpace(candidateProfile)
+            ? jobDescription
+            : $"CANDIDATE PROFILE:\n{candidateProfile.Trim()}\n\nJOB DESCRIPTION:\n{jobDescription}";
     }
 }
