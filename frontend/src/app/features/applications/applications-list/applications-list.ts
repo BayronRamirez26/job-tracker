@@ -13,6 +13,7 @@ import { ProfileStore } from '../../../services/profile-store';
 import { ToastService } from '../../../services/toast.service';
 import { humanize } from '../../../shared/humanize';
 import { ApplicationsBoard } from '../applications-board/applications-board';
+import { ApplicationDrawer } from '../application-drawer/application-drawer';
 import { ProfilePicker } from '../../../components/profile-picker/profile-picker';
 
 type View = 'table' | 'board';
@@ -26,7 +27,7 @@ const VIEW_KEY = 'jobtracker.appsView';
 
 @Component({
   selector: 'app-applications-list',
-  imports: [FormsModule, ApplicationsBoard, ProfilePicker],
+  imports: [FormsModule, ApplicationsBoard, ApplicationDrawer, ProfilePicker],
   templateUrl: './applications-list.html',
   styleUrl: './applications-list.css',
 })
@@ -132,6 +133,10 @@ export class ApplicationsList {
 
   protected remove(app: JobApplication): void {
     this.store.remove(app);
+  }
+
+  protected openEdit(app: JobApplication): void {
+    this.store.openEdit(app);
   }
 
   private blankForm(): CreateJobApplicationRequest {

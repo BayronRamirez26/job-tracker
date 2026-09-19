@@ -106,13 +106,13 @@
         </thead>
         <tbody>
           @for (app of applications(); track app.id) {
-            <tr>
+            <tr class="row-click" (click)="openEdit(app)" title="Edit application">
               <td class="strong">{{ app.company }}</td>
               <td>{{ app.position }}</td>
               <td><span class="badge" [attr.data-status]="app.status">{{ humanize(app.status) }}</span></td>
               <td>{{ humanize(app.source) }}</td>
               <td class="tnum">{{ app.appliedDate ?? '—' }}</td>
-              <td class="actions"><button class="danger" (click)="remove(app)">Delete</button></td>
+              <td class="actions"><button class="danger" (click)="remove(app); $event.stopPropagation()">Delete</button></td>
             </tr>
           }
         </tbody>
@@ -120,3 +120,5 @@
     </div>
   </section>
 }
+
+<app-application-drawer />

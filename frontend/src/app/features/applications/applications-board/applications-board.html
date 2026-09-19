@@ -14,7 +14,7 @@
         (cdkDropListDropped)="drop($event, col.status)"
       >
         @for (app of col.apps; track app.id) {
-          <article class="card" cdkDrag [cdkDragData]="app">
+          <article class="card" cdkDrag [cdkDragData]="app" (click)="openEdit(app)" title="Edit application">
             <div class="company">{{ app.company }}</div>
             <div class="position">{{ app.position }}</div>
             <div class="meta">{{ humanize(app.source) }}@if (app.appliedDate) { · {{ app.appliedDate }}}</div>

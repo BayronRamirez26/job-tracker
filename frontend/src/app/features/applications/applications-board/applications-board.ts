@@ -33,4 +33,9 @@ export class ApplicationsBoard {
     }
     this.store.changeStatus(event.item.data as JobApplication, status);
   }
+
+  // A genuine click (CDK suppresses the click that ends a real drag) opens the detail drawer.
+  protected openEdit(app: JobApplication): void {
+    this.store.openEdit(app);
+  }
 }

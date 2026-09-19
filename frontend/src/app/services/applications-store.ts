@@ -20,6 +20,18 @@ export class ApplicationsStore {
   readonly loading = signal(false);
   readonly error = signal<string | null>(null);
 
+  // The application currently open in the detail drawer (null = closed).
+  private readonly _selected = signal<JobApplication | null>(null);
+  readonly selected = this._selected.asReadonly();
+
+  openEdit(app: JobApplication): void {
+    this._selected.set(app);
+  }
+
+  closeEdit(): void {
+    this._selected.set(null);
+  }
+
   load(): void {
     this.loading.set(true);
     this.error.set(null);
@@ -72,6 +84,27 @@ export class ApplicationsStore {
       error: () => {
         this._apps.set(previous);
         this.toasts.error('Could not move the application.');
+      },
+    });
+  }
+
+  /// Saves a full edit from the detail drawer. Updates the row optimistically, then PUTs the record;
+  /// rolls back on failure. `onSettled` reports success so the drawer can close (or stay open).
+  update(id: string, request: CreateJobApplicationRequest, onSettled?: (ok: boolean) => void): void {
+    const previous = this._apps();
+    this._apps.update((apps) => apps.map((a) => (a.id === id ? { ...a, ...request } : a)));
+
+    this.service.update(id, request).subscribe({
+      next: (updated) => {
+        this._apps.update((apps) => apps.map((a) => (a.id === updated.id ? updated : a)));
+        this._selected.update((s) => (s && s.id === updated.id ? updated : s));
+        this.toasts.success(`Updated ${updated.company}.`);
+        onSettled?.(true);
+      },
+      error: () => {
+        this._apps.set(previous);
+        this.toasts.error('Could not update the application.');
+        onSettled?.(false);
       },
     });
   }

@@ -1,0 +1,64 @@
+@if (store.selected(); as app) {
+  <div class="drawer-backdrop" (click)="close()"></div>
+
+  <aside class="drawer" role="dialog" aria-label="Edit application" aria-modal="true">
+    <header class="drawer-head">
+      <div>
+        <h2>Edit application</h2>
+        <p class="drawer-sub muted">Last updated {{ app.updatedAt | date: 'medium' }}</p>
+      </div>
+      <button type="button" class="close-x" (click)="close()" aria-label="Close">×</button>
+    </header>
+
+    <div class="drawer-body app-form">
+      <div class="row">
+        <label>Company
+          <input [ngModel]="company()" (ngModelChange)="company.set($event)" [ngModelOptions]="{ standalone: true }" autocomplete="off" />
+        </label>
+        <label>Position
+          <input [ngModel]="position()" (ngModelChange)="position.set($event)" [ngModelOptions]="{ standalone: true }" autocomplete="off" />
+        </label>
+      </div>
+
+      <div class="row">
+        <label>Status
+          <select [ngModel]="status()" (ngModelChange)="status.set($event)" [ngModelOptions]="{ standalone: true }">
+            @for (s of statuses; track s) { <option [value]="s">{{ humanize(s) }}</option> }
+          </select>
+        </label>
+        <label>Source
+          <select [ngModel]="source()" (ngModelChange)="source.set($event)" [ngModelOptions]="{ standalone: true }">
+            @for (s of sources; track s) { <option [value]="s">{{ humanize(s) }}</option> }
+          </select>
+        </label>
+        <label>Applied date
+          <input type="date" [ngModel]="appliedDate()" (ngModelChange)="appliedDate.set($event)" [ngModelOptions]="{ standalone: true }" />
+        </label>
+      </div>
+
+      <div class="row">
+        <label>Salary min
+          <input type="number" [ngModel]="salaryMin()" (ngModelChange)="salaryMin.set($event)" [ngModelOptions]="{ standalone: true }" min="0" inputmode="numeric" autocomplete="off" />
+        </label>
+        <label>Salary max
+          <input type="number" [ngModel]="salaryMax()" (ngModelChange)="salaryMax.set($event)" [ngModelOptions]="{ standalone: true }" min="0" inputmode="numeric" autocomplete="off" />
+        </label>
+        <label>Currency
+          <input [ngModel]="currency()" (ngModelChange)="currency.set($event)" [ngModelOptions]="{ standalone: true }" maxlength="3" autocomplete="off" />
+        </label>
+      </div>
+
+      <label>Notes
+        <textarea [ngModel]="notes()" (ngModelChange)="notes.set($event)" [ngModelOptions]="{ standalone: true }" rows="5"></textarea>
+      </label>
+    </div>
+
+    <footer class="drawer-foot">
+      <button type="button" class="primary" (click)="save()" [disabled]="saving()">
+        {{ saving() ? 'Saving…' : 'Save changes' }}
+      </button>
+      <span class="spacer"></span>
+      <button type="button" class="danger" (click)="remove()">Delete</button>
+    </footer>
+  </aside>
+}
