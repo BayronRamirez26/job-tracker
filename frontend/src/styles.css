@@ -259,7 +259,8 @@ input::placeholder, textarea::placeholder { color: var(--placeholder); }
    shared by the applications form, the auth forms, and the profile list. */
 .app-form label,
 .auth-form label,
-.profile dt {
+.profile dt,
+.micro-label {
   font-size: 0.6875rem;
   font-weight: 600;
   letter-spacing: 0.05em;

@@ -4,19 +4,17 @@ import { FormsModule } from '@angular/forms';
 import { SummaryResponse } from '../../../models/summary';
 import { AiService } from '../../../services/ai.service';
 import { ProfileStore } from '../../../services/profile-store';
+import { ProfilePicker } from '../../../components/profile-picker/profile-picker';
 
 @Component({
   selector: 'app-summarize',
-  imports: [FormsModule],
+  imports: [FormsModule, ProfilePicker],
   templateUrl: './summarize.html',
   styleUrl: './summarize.css',
 })
 export class Summarize {
   private readonly ai = inject(AiService);
   private readonly profiles = inject(ProfileStore);
-
-  // When the user has a saved profile, the summary is tailored to them.
-  protected readonly personalized = this.profiles.hasProfile;
 
   // Matches JobDescription.MaxLength on the server, so we stop the user before the API does.
   protected readonly maxLength = 20_000;

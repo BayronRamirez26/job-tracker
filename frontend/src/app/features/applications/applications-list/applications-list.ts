@@ -13,6 +13,7 @@ import { ProfileStore } from '../../../services/profile-store';
 import { ToastService } from '../../../services/toast.service';
 import { humanize } from '../../../shared/humanize';
 import { ApplicationsBoard } from '../applications-board/applications-board';
+import { ProfilePicker } from '../../../components/profile-picker/profile-picker';
 
 type View = 'table' | 'board';
 interface SalaryForm {
@@ -25,7 +26,7 @@ const VIEW_KEY = 'jobtracker.appsView';
 
 @Component({
   selector: 'app-applications-list',
-  imports: [FormsModule, ApplicationsBoard],
+  imports: [FormsModule, ApplicationsBoard, ProfilePicker],
   templateUrl: './applications-list.html',
   styleUrl: './applications-list.css',
 })
@@ -34,9 +35,6 @@ export class ApplicationsList {
   private readonly ai = inject(AiService);
   private readonly profiles = inject(ProfileStore);
   private readonly toasts = inject(ToastService);
-
-  // When the user has a saved profile, Smart Add frames the notes around fit for them.
-  protected readonly personalized = this.profiles.hasProfile;
 
   protected readonly statuses = APPLICATION_STATUSES;
   protected readonly sources = APPLICATION_SOURCES;

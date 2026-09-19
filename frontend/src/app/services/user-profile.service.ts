@@ -1,20 +1,32 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Profile } from '../models/profile';
+import { ProfileDetail, ProfileSummary, SaveProfileRequest } from '../models/profile';
 
-/// Reads and writes the current user's professional profile. These calls are authenticated —
+/// CRUD for the current user's named professional profiles. These calls are authenticated —
 /// authInterceptor attaches the Bearer token automatically.
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api/users/me/profile';
+  private readonly baseUrl = '/api/users/me/profiles';
 
-  get(): Observable<Profile | null> {
-    return this.http.get<Profile | null>(this.baseUrl);
+  list(): Observable<ProfileSummary[]> {
+    return this.http.get<ProfileSummary[]>(this.baseUrl);
   }
 
-  save(profile: Profile): Observable<Profile> {
-    return this.http.put<Profile>(this.baseUrl, profile);
+  get(id: string): Observable<ProfileDetail> {
+    return this.http.get<ProfileDetail>(`${this.baseUrl}/${id}`);
+  }
+
+  create(request: SaveProfileRequest): Observable<ProfileDetail> {
+    return this.http.post<ProfileDetail>(this.baseUrl, request);
+  }
+
+  update(id: string, request: SaveProfileRequest): Observable<ProfileDetail> {
+    return this.http.put<ProfileDetail>(`${this.baseUrl}/${id}`, request);
+  }
+
+  delete(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
 }

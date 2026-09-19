@@ -29,9 +29,7 @@
         </svg>
         {{ extracting() ? 'Reading…' : 'Extract details' }}
       </button>
-      @if (personalized()) {
-        <span class="personalized-tag">Personalized to your profile</span>
-      }
+      <app-profile-picker />
     </div>
   </div>
 

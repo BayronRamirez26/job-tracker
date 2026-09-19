@@ -1,100 +1,184 @@
 <header class="page-head">
-  <h1 class="page-title">Your profile</h1>
-  <p class="page-sub">Your account, and the professional profile that powers the AI features.</p>
+  <h1 class="page-title">Your profiles</h1>
+  <p class="page-sub">Keep one profile per angle — e.g. Full-Stack Developer and Sales Engineer. The AI features tailor to whichever is active.</p>
 </header>
 
 <section class="panel">
-  <h2>Professional profile</h2>
-
-  @if (loadingProfile()) {
+  @if (store.loading()) {
     <p class="muted state">Loading…</p>
   } @else {
-    <div class="cv-builder">
-      <label class="cv-label" for="cv">Build (or rebuild) from your CV</label>
-      <textarea
-        id="cv"
-        [(ngModel)]="cvText"
-        [ngModelOptions]="{ standalone: true }"
-        rows="5"
-        placeholder="Paste your CV — LaTeX source works great…"
-        [disabled]="extracting()"
-      ></textarea>
-      <div class="cv-actions">
-        <button type="button" class="build-btn" (click)="buildFromCv()" [disabled]="extracting() || !cvText.trim()">
-          <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
-            <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z" />
-          </svg>
-          {{ extracting() ? 'Reading…' : 'Build profile' }}
+    <!-- Switcher -->
+    <div class="switcher">
+      @for (p of store.summaries(); track p.id) {
+        <button
+          type="button"
+          class="profile-tab"
+          [class.active]="!isNew() && p.id === editingId()"
+          (click)="selectProfile(p.id)"
+        >
+          {{ p.name }}
         </button>
-        @if (dirty()) {
-          <button type="button" (click)="save()" [disabled]="saving()">
-            {{ saving() ? 'Saving…' : 'Save profile' }}
-          </button>
-        }
-      </div>
+      }
+      <button type="button" class="profile-tab new-tab" [class.active]="isNew()" (click)="startNew()">
+        + New profile
+      </button>
     </div>
 
-    @if (profile(); as p) {
-      <div class="profile-view">
-        @if (p.fullName) { <h3 class="pv-name">{{ p.fullName }}</h3> }
-        @if (p.headline) { <p class="pv-headline">{{ p.headline }}</p> }
-        @if (p.location || p.yearsOfExperience != null) {
-          <p class="pv-meta muted">
-            {{ p.location }}@if (p.location && p.yearsOfExperience != null) { · }@if (p.yearsOfExperience != null) { {{ p.yearsOfExperience }} yrs experience }
-          </p>
-        }
-        @if (p.summary) { <p class="pv-summary">{{ p.summary }}</p> }
+    @if (isNew() || editingId()) {
+      <div class="editor">
+        <!-- Name -->
+        <div class="field">
+          <label class="micro-label" for="pname">Profile name</label>
+          <input
+            id="pname"
+            type="text"
+            [ngModel]="name()"
+            (ngModelChange)="onName($event)"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="e.g. Full-Stack Developer"
+          />
+        </div>
 
-        @if (p.skills.length) {
-          <div class="pv-block">
-            <h4>Skills</h4>
-            <ul class="chips">
-              @for (s of p.skills; track s) { <li>{{ s }}</li> }
+        <!-- CV builder -->
+        <div class="cv-builder">
+          <label class="micro-label" for="cv">Fill this profile from a CV</label>
+          <textarea
+            id="cv"
+            [ngModel]="cvText()"
+            (ngModelChange)="cvText.set($event)"
+            [ngModelOptions]="{ standalone: true }"
+            rows="4"
+            placeholder="Paste a CV — LaTeX source works great — then review below…"
+            [disabled]="extracting()"
+          ></textarea>
+          <div class="cv-actions">
+            <button type="button" class="build-btn" (click)="buildFromCv()" [disabled]="extracting() || !cvText().trim()">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
+                <path d="M12 2l1.8 5.2L19 9l-5.2 1.8L12 16l-1.8-5.2L5 9l5.2-1.8L12 2z" />
+              </svg>
+              {{ extracting() ? 'Reading…' : 'Fill from CV' }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Basics -->
+        <div class="grid-2">
+          <div class="field">
+            <label class="micro-label" for="fullName">Full name</label>
+            <input id="fullName" type="text" [ngModel]="draft().fullName" (ngModelChange)="setFullName($event)" [ngModelOptions]="{ standalone: true }" />
+          </div>
+          <div class="field">
+            <label class="micro-label" for="headline">Headline</label>
+            <input id="headline" type="text" [ngModel]="draft().headline" (ngModelChange)="setHeadline($event)" [ngModelOptions]="{ standalone: true }" placeholder="e.g. Senior Backend Engineer" />
+          </div>
+          <div class="field">
+            <label class="micro-label" for="location">Location</label>
+            <input id="location" type="text" [ngModel]="draft().location" (ngModelChange)="setLocation($event)" [ngModelOptions]="{ standalone: true }" />
+          </div>
+          <div class="field">
+            <label class="micro-label" for="years">Years of experience</label>
+            <input id="years" type="number" min="0" [ngModel]="draft().yearsOfExperience" (ngModelChange)="setYears($event)" [ngModelOptions]="{ standalone: true }" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="micro-label" for="summary">Summary</label>
+          <textarea id="summary" rows="3" [ngModel]="draft().summary" (ngModelChange)="setSummary($event)" [ngModelOptions]="{ standalone: true }" placeholder="A couple of sentences about you…"></textarea>
+        </div>
+
+        <!-- Skills -->
+        <div class="field">
+          <label class="micro-label">Skills</label>
+          @if (draft().skills.length) {
+            <ul class="chips editable">
+              @for (s of draft().skills; track $index) {
+                <li>{{ s }}<button type="button" class="chip-x" (click)="removeSkill($index)" aria-label="Remove skill">×</button></li>
+              }
             </ul>
+          }
+          <div class="add-row">
+            <input type="text" [ngModel]="skillInput()" (ngModelChange)="skillInput.set($event)" (keydown.enter)="addSkill(); $event.preventDefault()" [ngModelOptions]="{ standalone: true }" placeholder="Add a skill and press Enter" />
+            <button type="button" (click)="addSkill()">Add</button>
           </div>
-        }
+        </div>
 
-        @if (p.experience.length) {
-          <div class="pv-block">
-            <h4>Experience</h4>
-            @for (e of p.experience; track $index) {
-              <div class="pv-item">
-                <div class="pv-item-head">
-                  <span class="pv-item-title">{{ e.title || 'Role' }} · {{ e.company }}</span>
-                  @if (e.period) { <span class="pv-item-period muted">{{ e.period }}</span> }
-                </div>
-                @if (e.highlights.length) {
-                  <ul class="pv-highlights">
-                    @for (h of e.highlights; track $index) { <li>{{ h }}</li> }
-                  </ul>
-                }
+        <!-- Certifications -->
+        <div class="field">
+          <label class="micro-label">Certifications</label>
+          @for (c of draft().certifications; track $index) {
+            <div class="repeat-row cert-row">
+              <input type="text" class="grow" placeholder="Certification" [ngModel]="c.name" (ngModelChange)="setCertification($index, 'name', $event)" [ngModelOptions]="{ standalone: true }" />
+              <input type="text" placeholder="Issuer" [ngModel]="c.issuer" (ngModelChange)="setCertification($index, 'issuer', $event)" [ngModelOptions]="{ standalone: true }" />
+              <input type="text" class="year" placeholder="Year" [ngModel]="c.year" (ngModelChange)="setCertification($index, 'year', $event)" [ngModelOptions]="{ standalone: true }" />
+              <button type="button" class="row-x" (click)="removeCertification($index)" aria-label="Remove certification">×</button>
+            </div>
+          }
+          <button type="button" class="repeat-add" (click)="addCertification()">+ Add certification</button>
+        </div>
+
+        <!-- Experience -->
+        <div class="field">
+          <label class="micro-label">Experience</label>
+          @for (e of draft().experience; track $index) {
+            <div class="exp-card">
+              <div class="grid-3">
+                <input type="text" placeholder="Company" [ngModel]="e.company" (ngModelChange)="setExperience($index, 'company', $event)" [ngModelOptions]="{ standalone: true }" />
+                <input type="text" placeholder="Title" [ngModel]="e.title" (ngModelChange)="setExperience($index, 'title', $event)" [ngModelOptions]="{ standalone: true }" />
+                <input type="text" placeholder="Period (e.g. 2021–2024)" [ngModel]="e.period" (ngModelChange)="setExperience($index, 'period', $event)" [ngModelOptions]="{ standalone: true }" />
               </div>
-            }
-          </div>
-        }
+              <textarea rows="3" placeholder="Highlights — one per line" [ngModel]="highlightsText($index)" (ngModelChange)="setHighlights($index, $event)" [ngModelOptions]="{ standalone: true }"></textarea>
+              <button type="button" class="row-remove" (click)="removeExperience($index)">Remove role</button>
+            </div>
+          }
+          <button type="button" class="repeat-add" (click)="addExperience()">+ Add role</button>
+        </div>
 
-        @if (p.education.length) {
-          <div class="pv-block">
-            <h4>Education</h4>
-            @for (ed of p.education; track $index) {
-              <div class="pv-edu">
-                @if (ed.degree) { {{ ed.degree }} · }{{ ed.institution }}@if (ed.year) { · {{ ed.year }} }
-              </div>
-            }
-          </div>
-        }
+        <!-- Education -->
+        <div class="field">
+          <label class="micro-label">Education</label>
+          @for (ed of draft().education; track $index) {
+            <div class="repeat-row edu-row">
+              <input type="text" class="grow" placeholder="Institution" [ngModel]="ed.institution" (ngModelChange)="setEducation($index, 'institution', $event)" [ngModelOptions]="{ standalone: true }" />
+              <input type="text" placeholder="Degree" [ngModel]="ed.degree" (ngModelChange)="setEducation($index, 'degree', $event)" [ngModelOptions]="{ standalone: true }" />
+              <input type="text" class="year" placeholder="Year" [ngModel]="ed.year" (ngModelChange)="setEducation($index, 'year', $event)" [ngModelOptions]="{ standalone: true }" />
+              <button type="button" class="row-x" (click)="removeEducation($index)" aria-label="Remove education">×</button>
+            </div>
+          }
+          <button type="button" class="repeat-add" (click)="addEducation()">+ Add education</button>
+        </div>
 
-        @if (p.links.length) {
-          <div class="pv-block">
-            <h4>Links</h4>
-            <ul class="pv-links">
-              @for (l of p.links; track l) { <li>{{ l }}</li> }
+        <!-- Links -->
+        <div class="field">
+          <label class="micro-label">Links</label>
+          @if (draft().links.length) {
+            <ul class="chips editable">
+              @for (l of draft().links; track $index) {
+                <li class="link-chip">{{ l }}<button type="button" class="chip-x" (click)="removeLink($index)" aria-label="Remove link">×</button></li>
+              }
             </ul>
+          }
+          <div class="add-row">
+            <input type="text" [ngModel]="linkInput()" (ngModelChange)="linkInput.set($event)" (keydown.enter)="addLink(); $event.preventDefault()" [ngModelOptions]="{ standalone: true }" placeholder="Add a URL and press Enter" />
+            <button type="button" (click)="addLink()">Add</button>
           </div>
-        }
+        </div>
+
+        <!-- Actions -->
+        <div class="editor-actions">
+          <button type="button" class="primary" (click)="save()" [disabled]="saving()">
+            {{ saving() ? 'Saving…' : isNew() ? 'Create profile' : 'Save changes' }}
+          </button>
+          @if (dirty() && !saving()) {
+            <span class="unsaved">Unsaved changes</span>
+          }
+          <span class="spacer"></span>
+          <button type="button" class="danger" (click)="remove()" [disabled]="deleting()">
+            {{ deleting() ? 'Deleting…' : isNew() ? 'Discard' : 'Delete' }}
+          </button>
+        </div>
       </div>
     } @else {
-      <p class="muted">No profile yet — paste your CV above to build one.</p>
+      <p class="muted state">No profiles yet — create your first one to power the AI features.</p>
     }
   }
 </section>

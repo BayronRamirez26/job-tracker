@@ -12,8 +12,8 @@
   flex-wrap: wrap;
 }
 .form-foot .actions { display: flex; gap: 0.6rem; }
+.foot-left { display: flex; align-items: center; gap: 0.9rem; flex-wrap: wrap; }
 .count { font-size: 0.8rem; font-variant-numeric: tabular-nums; }
-.personalized-tag { color: var(--primary); font-weight: 500; }
 
 .bullets { margin: 0; padding-left: 1.2rem; max-width: 68ch; }
 .bullets li { margin: 0.4rem 0; line-height: 1.55; }
