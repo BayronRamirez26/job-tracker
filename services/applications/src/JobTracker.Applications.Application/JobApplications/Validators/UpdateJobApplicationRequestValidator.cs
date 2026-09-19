@@ -22,6 +22,9 @@ public sealed class UpdateJobApplicationRequestValidator : AbstractValidator<Upd
         RuleFor(x => x.Notes)
             .MaximumLength(2000);
 
+        RuleFor(x => x.JobDescription)
+            .MaximumLength(20000);
+
         RuleFor(x => x.Salary!)
             .SetValidator(new SalaryRangeDtoValidator())
             .When(x => x.Salary is not null);

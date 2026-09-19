@@ -68,7 +68,7 @@ public class JobApplicationTests
         var salary = SalaryRange.Create(50_000, 60_000, "usd");
 
         app.UpdateDetails("Globex", "Staff Engineer", ApplicationSource.Referral,
-            new DateOnly(2026, 1, 1), "note", salary);
+            new DateOnly(2026, 1, 1), "note", salary, "  the job posting  ");
 
         Assert.Equal("Globex", app.Company);
         Assert.Equal("Staff Engineer", app.Position);
@@ -76,6 +76,7 @@ public class JobApplicationTests
         Assert.Equal(new DateOnly(2026, 1, 1), app.AppliedDate);
         Assert.Equal("note", app.Notes);
         Assert.Equal(salary, app.Salary);
+        Assert.Equal("the job posting", app.JobDescription); // trimmed
         Assert.Equal(createdAt, app.CreatedAt);
     }
 }

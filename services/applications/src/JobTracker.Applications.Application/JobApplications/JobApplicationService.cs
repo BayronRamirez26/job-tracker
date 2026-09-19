@@ -45,7 +45,8 @@ public sealed class JobApplicationService : IJobApplicationService
             request.Source,
             request.AppliedDate,
             request.Notes,
-            request.Salary.ToDomain());
+            request.Salary.ToDomain(),
+            request.JobDescription);
 
         await _repository.AddAsync(application, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
@@ -86,7 +87,8 @@ public sealed class JobApplicationService : IJobApplicationService
             request.Source,
             request.AppliedDate,
             request.Notes,
-            request.Salary.ToDomain());
+            request.Salary.ToDomain(),
+            request.JobDescription);
 
         application.ChangeStatus(request.Status);
 

@@ -13,4 +13,5 @@ public sealed record UpdateJobApplicationRequest(
     ApplicationSource Source,
     DateOnly? AppliedDate,
     string? Notes,
-    SalaryRangeDto? Salary);
+    SalaryRangeDto? Salary,
+    string? JobDescription = null);

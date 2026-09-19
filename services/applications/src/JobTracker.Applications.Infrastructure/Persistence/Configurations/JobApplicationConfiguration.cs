@@ -51,6 +51,10 @@ internal sealed class JobApplicationConfiguration : IEntityTypeConfiguration<Job
         builder.Property(x => x.Notes)
             .HasMaxLength(2000);
 
+        // The captured job posting — long free text, so a generous cap (matches the AI input limit).
+        builder.Property(x => x.JobDescription)
+            .HasMaxLength(20000);
+
         builder.Property(x => x.CreatedAt)
             .IsRequired();
 

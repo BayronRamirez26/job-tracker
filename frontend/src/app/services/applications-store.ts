@@ -75,6 +75,7 @@ export class ApplicationsStore {
       appliedDate: app.appliedDate,
       notes: app.notes,
       salary: app.salary,
+      jobDescription: app.jobDescription,
     };
     this.service.update(app.id, request).subscribe({
       next: (updated) => {

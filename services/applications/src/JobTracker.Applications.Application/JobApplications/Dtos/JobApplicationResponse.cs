@@ -13,4 +13,5 @@ public sealed record JobApplicationResponse(
     string? Notes,
     SalaryRangeDto? Salary,
     DateTimeOffset CreatedAt,
-    DateTimeOffset UpdatedAt);
+    DateTimeOffset UpdatedAt,
+    string? JobDescription = null);

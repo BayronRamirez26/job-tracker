@@ -122,6 +122,8 @@ export class ApplicationsList {
       appliedDate: this.form.appliedDate || null,
       notes: this.form.notes || null,
       salary,
+      // Keep the pasted posting on the record so the AI assistant can use it later.
+      jobDescription: this.smartText.trim() || null,
     };
 
     this.store.add(request, () => {
@@ -148,6 +150,7 @@ export class ApplicationsList {
       appliedDate: null,
       notes: null,
       salary: null,
+      jobDescription: null,
     };
   }
 

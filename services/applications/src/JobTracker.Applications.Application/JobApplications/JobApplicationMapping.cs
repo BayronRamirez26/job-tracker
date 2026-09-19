@@ -25,7 +25,8 @@ internal static class JobApplicationMapping
                 ? null
                 : new SalaryRangeDto(entity.Salary.Min, entity.Salary.Max, entity.Salary.Currency),
             entity.CreatedAt,
-            entity.UpdatedAt);
+            entity.UpdatedAt,
+            entity.JobDescription);
 
     /// <summary>
     /// Converts the salary DTO into the domain value object. <c>SalaryRange.Create</c> re-checks

@@ -36,6 +36,7 @@ public sealed class JobApplication
         DateOnly? appliedDate,
         string? notes,
         SalaryRange? salary,
+        string? jobDescription,
         DateTimeOffset createdAt,
         DateTimeOffset updatedAt)
     {
@@ -48,6 +49,7 @@ public sealed class JobApplication
         AppliedDate = appliedDate;
         Notes = notes;
         Salary = salary;
+        JobDescription = jobDescription;
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
     }
@@ -72,6 +74,9 @@ public sealed class JobApplication
 
     public SalaryRange? Salary { get; private set; }
 
+    /// <summary>The original job posting text, if captured — powers the AI application assistant.</summary>
+    public string? JobDescription { get; private set; }
+
     /// <summary>When the record was created (UTC). Set once and never changed.</summary>
     public DateTimeOffset CreatedAt { get; private set; }
 
@@ -87,7 +92,8 @@ public sealed class JobApplication
         ApplicationSource source,
         DateOnly? appliedDate = null,
         string? notes = null,
-        SalaryRange? salary = null)
+        SalaryRange? salary = null,
+        string? jobDescription = null)
     {
         if (userId == Guid.Empty)
         {
@@ -106,6 +112,7 @@ public sealed class JobApplication
             appliedDate: appliedDate,
             notes: NormalizeOptional(notes),
             salary: salary,
+            jobDescription: NormalizeOptional(jobDescription),
             createdAt: now,
             updatedAt: now);
     }
@@ -120,7 +127,8 @@ public sealed class JobApplication
         ApplicationSource source,
         DateOnly? appliedDate,
         string? notes,
-        SalaryRange? salary)
+        SalaryRange? salary,
+        string? jobDescription)
     {
         Company = NormalizeRequired(company, nameof(company));
         Position = NormalizeRequired(position, nameof(position));
@@ -128,6 +136,7 @@ public sealed class JobApplication
         AppliedDate = appliedDate;
         Notes = NormalizeOptional(notes);
         Salary = salary;
+        JobDescription = NormalizeOptional(jobDescription);
         Touch();
     }
 

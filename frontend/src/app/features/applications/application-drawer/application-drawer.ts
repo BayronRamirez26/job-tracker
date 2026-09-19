@@ -36,6 +36,7 @@ export class ApplicationDrawer {
   protected readonly source = signal<ApplicationSource>('Other');
   protected readonly appliedDate = signal('');
   protected readonly notes = signal('');
+  protected readonly jobDescription = signal('');
   protected readonly salaryMin = signal<number | null>(null);
   protected readonly salaryMax = signal<number | null>(null);
   protected readonly currency = signal('USD');
@@ -54,6 +55,7 @@ export class ApplicationDrawer {
         this.source.set(app.source);
         this.appliedDate.set(app.appliedDate ?? '');
         this.notes.set(app.notes ?? '');
+        this.jobDescription.set(app.jobDescription ?? '');
         this.salaryMin.set(app.salary?.min ?? null);
         this.salaryMax.set(app.salary?.max ?? null);
         this.currency.set(app.salary?.currency ?? 'USD');
@@ -87,6 +89,7 @@ export class ApplicationDrawer {
       appliedDate: this.appliedDate() || null,
       notes: this.notes().trim() || null,
       salary,
+      jobDescription: this.jobDescription().trim() || null,
     };
 
     this.saving.set(true);

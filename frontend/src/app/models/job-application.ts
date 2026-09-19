@@ -39,6 +39,7 @@ export interface JobApplication {
   appliedDate: string | null;
   notes: string | null;
   salary: SalaryRange | null;
+  jobDescription: string | null;
   createdAt: string;
   updatedAt: string;
 }
@@ -51,4 +52,5 @@ export interface CreateJobApplicationRequest {
   appliedDate: string | null;
   notes: string | null;
   salary: SalaryRange | null;
+  jobDescription: string | null;
 }
