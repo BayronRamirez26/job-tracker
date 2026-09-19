@@ -13,5 +13,6 @@ public sealed record CvProfileResponse(
     IReadOnlyList<string> Skills,
     IReadOnlyList<CvExperience> Experience,
     IReadOnlyList<CvEducation> Education,
+    IReadOnlyList<CvCertification> Certifications,
     IReadOnlyList<string> Links,
     string Model);

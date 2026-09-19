@@ -27,6 +27,8 @@ public sealed class CvService : ICvService
         "\"experience\" (array of {\"company\": string, \"title\": string or null, " +
         "\"period\": string or null, \"highlights\": array of strings}, [] if none), " +
         "\"education\" (array of {\"institution\": string, \"degree\": string or null, " +
+        "\"year\": string or null}, [] if none), " +
+        "\"certifications\" (array of {\"name\": string, \"issuer\": string or null, " +
         "\"year\": string or null}, [] if none), and " +
         "\"links\" (array of URL strings, [] if none). " +
         "Extract only what the CV states; never invent facts. Use null or [] for anything absent.";
@@ -63,6 +65,7 @@ public sealed class CvService : ICvService
             parsed.Skills ?? Array.Empty<string>(),
             parsed.Experience ?? Array.Empty<CvExperience>(),
             parsed.Education ?? Array.Empty<CvEducation>(),
+            parsed.Certifications ?? Array.Empty<CvCertification>(),
             parsed.Links ?? Array.Empty<string>(),
             completion.Model);
     }
@@ -92,7 +95,7 @@ public sealed class CvService : ICvService
         return text[start..(end + 1)];
     }
 
-    private static readonly ParsedProfile Empty = new(null, null, null, null, null, null, null, null, null);
+    private static readonly ParsedProfile Empty = new(null, null, null, null, null, null, null, null, null, null);
 
     private sealed record ParsedProfile(
         string? FullName,
@@ -103,5 +106,6 @@ public sealed class CvService : ICvService
         IReadOnlyList<string>? Skills,
         IReadOnlyList<CvExperience>? Experience,
         IReadOnlyList<CvEducation>? Education,
+        IReadOnlyList<CvCertification>? Certifications,
         IReadOnlyList<string>? Links);
 }
