@@ -33,6 +33,10 @@ public sealed class AiApiFactory : WebApplicationFactory<Program>
             "\"location\":\"Remote\",\"yearsOfExperience\":6,\"skills\":[\"C#\",\".NET\"]," +
             "\"experience\":[{\"company\":\"Acme\",\"title\":\"Engineer\",\"period\":\"2020-2023\",\"highlights\":[\"Shipped\"]}]," +
             "\"education\":[{\"institution\":\"MIT\",\"degree\":\"BSc\",\"year\":\"2016\"}],\"links\":[]}";
+        public const string StubFit =
+            "{\"score\":78,\"strengths\":[\"Strong C# background\"],\"gaps\":[\"No Kubernetes\"],\"summary\":\"A solid overall fit.\"}";
+        public const string StubCoverLetter = "Dear Hiring Manager, I am excited to apply. Sincerely, Ada.";
+        public const string StubTailoredCv = "# Ada Lovelace\n\n## Summary\nTailored to the role.";
 
         // Each use case names its intent in the system prompt; return the shape it expects.
         public Task<AiCompletion> CompleteAsync(string systemPrompt, string userPrompt, CancellationToken cancellationToken = default)
@@ -45,6 +49,18 @@ public sealed class AiApiFactory : WebApplicationFactory<Program>
             else if (systemPrompt.Contains("job posting", StringComparison.OrdinalIgnoreCase))
             {
                 text = StubExtraction;
+            }
+            else if (systemPrompt.Contains("fit assessment", StringComparison.OrdinalIgnoreCase))
+            {
+                text = StubFit;
+            }
+            else if (systemPrompt.Contains("cover letter", StringComparison.OrdinalIgnoreCase))
+            {
+                text = StubCoverLetter;
+            }
+            else if (systemPrompt.Contains("tailored resume", StringComparison.OrdinalIgnoreCase))
+            {
+                text = StubTailoredCv;
             }
             else
             {
