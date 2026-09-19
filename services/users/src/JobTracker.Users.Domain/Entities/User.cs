@@ -35,13 +35,6 @@ public sealed class User
 
     public DateTimeOffset CreatedAt { get; private set; }
 
-    /// <summary>
-    /// The user's professional profile as opaque JSON. Like <see cref="PasswordHash"/>, the domain
-    /// holds it without knowing its shape — the Application layer owns (de)serialization. Null until
-    /// the user builds a profile from their CV.
-    /// </summary>
-    public string? ProfileJson { get; private set; }
-
     public static User Create(Email email, string passwordHash, string displayName)
     {
         if (string.IsNullOrWhiteSpace(passwordHash))
@@ -55,10 +48,5 @@ public sealed class User
         }
 
         return new User(Guid.NewGuid(), email, passwordHash, displayName.Trim(), DateTimeOffset.UtcNow);
-    }
-
-    public void SetProfile(string? profileJson)
-    {
-        ProfileJson = string.IsNullOrWhiteSpace(profileJson) ? null : profileJson;
     }
 }

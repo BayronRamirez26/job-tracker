@@ -15,6 +15,8 @@ public sealed class UsersDbContext : DbContext, IUnitOfWork
 
     public DbSet<User> Users => Set<User>();
 
+    public DbSet<Profile> Profiles => Set<Profile>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
