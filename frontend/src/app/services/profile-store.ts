@@ -27,6 +27,9 @@ export class ProfileStore {
 
   readonly hasProfiles = computed(() => this._summaries().length > 0);
   readonly activeContent = computed(() => this._activeDetail()?.content ?? null);
+  readonly activeName = computed(
+    () => this._summaries().find((s) => s.id === this._activeId())?.name ?? this._activeDetail()?.name ?? null,
+  );
 
   constructor() {
     // Only re-run when the auth state flips; the body runs untracked so setting our own signals
@@ -85,6 +88,38 @@ export class ProfileStore {
     }
     if (p.summary) parts.push(p.summary);
     return parts.length > 0 ? parts.join('. ') : null;
+  }
+
+  /// A fuller profile for the application assistant (cover letters, tailored CVs, fit) — includes
+  /// experience and education so the model has the real material to work from. Null when inactive.
+  asResumeText(): string | null {
+    const p = this.activeContent();
+    if (!p) {
+      return null;
+    }
+    const lines: string[] = [];
+    if (p.fullName) lines.push(p.fullName);
+    if (p.headline) lines.push(p.headline);
+    if (p.location) lines.push(p.location);
+    if (p.yearsOfExperience != null) lines.push(`${p.yearsOfExperience} years of experience`);
+    if (p.summary) lines.push(`\nSummary: ${p.summary}`);
+    if (p.skills.length) lines.push(`\nSkills: ${p.skills.join(', ')}`);
+    if (p.certifications.length) {
+      const certs = p.certifications.map((c) => [c.name, c.issuer, c.year].filter(Boolean).join(' — '));
+      lines.push(`Certifications: ${certs.join('; ')}`);
+    }
+    if (p.experience.length) {
+      lines.push('\nExperience:');
+      for (const e of p.experience) {
+        lines.push(`- ${[e.title, e.company, e.period].filter(Boolean).join(' · ')}`);
+        for (const h of e.highlights) lines.push(`  • ${h}`);
+      }
+    }
+    if (p.education.length) {
+      lines.push('\nEducation:');
+      for (const ed of p.education) lines.push(`- ${[ed.degree, ed.institution, ed.year].filter(Boolean).join(' · ')}`);
+    }
+    return lines.join('\n');
   }
 
   private loadAll(): void {

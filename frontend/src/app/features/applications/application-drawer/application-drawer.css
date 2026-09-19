@@ -76,6 +76,67 @@ button.primary {
 }
 button.primary:hover:not(:disabled) { background: var(--primary-hover); border-color: var(--primary-hover); }
 
+/* AI assistant */
+.assistant {
+  margin-top: 0.4rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+.assist-head { display: flex; align-items: baseline; gap: 0.6rem; }
+.assist-head h3 { margin: 0; font-size: 0.95rem; }
+.assist-profile { font-size: 0.78rem; }
+.assist-hint { margin: 0.5rem 0 0; font-size: 0.82rem; }
+.assist-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.7rem; }
+.assist-actions button { padding: 0.35rem 0.7rem; font-size: 0.85rem; }
+
+.assist-result {
+  margin-top: 0.9rem;
+  padding: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface-hover);
+}
+.assist-h {
+  margin: 0.7rem 0 0.35rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.assist-h:first-child { margin-top: 0; }
+
+.fit-score { display: flex; align-items: baseline; gap: 0.1rem; font-weight: 800; letter-spacing: -0.02em; }
+.fit-num { font-size: 2rem; }
+.fit-max { font-size: 0.9rem; color: var(--muted); font-weight: 600; }
+.fit-score[data-band='high'] .fit-num { color: #16a34a; }
+.fit-score[data-band='mid'] .fit-num { color: var(--primary); }
+.fit-score[data-band='low'] .fit-num { color: var(--danger); }
+:root[data-theme='dark'] .fit-score[data-band='high'] .fit-num { color: #4ade80; }
+
+.fit-summary { margin: 0.3rem 0 0; line-height: 1.5; font-size: 0.9rem; }
+.fit-list { margin: 0; padding-left: 1.1rem; }
+.fit-list li { margin: 0.2rem 0; line-height: 1.45; font-size: 0.88rem; }
+.fit-list.strengths li::marker { color: #16a34a; }
+.fit-list.gaps li::marker { color: var(--danger); }
+
+.result-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.copy-btn { padding: 0.2rem 0.55rem; font-size: 0.78rem; }
+.result-body { margin-top: 0.5rem; font-size: 0.88rem; line-height: 1.5; }
+.result-body.letter { white-space: pre-wrap; }
+.result-body.cv {
+  max-height: 320px;
+  overflow: auto;
+  padding: 0.7rem;
+  border-radius: var(--radius);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 @keyframes drawer-slide {
   from { transform: translateX(100%); }
   to { transform: translateX(0); }

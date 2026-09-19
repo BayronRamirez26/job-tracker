@@ -55,6 +55,70 @@
       <label>Job description
         <textarea [ngModel]="jobDescription()" (ngModelChange)="jobDescription.set($event)" [ngModelOptions]="{ standalone: true }" rows="5" placeholder="Paste the posting to power the AI assistant…"></textarea>
       </label>
+
+      <section class="assistant">
+        <div class="assist-head">
+          <h3>AI assistant</h3>
+          @if (hasProfile() && profiles.activeName(); as n) {
+            <span class="assist-profile muted">using {{ n }}</span>
+          }
+        </div>
+
+        @if (!hasProfile()) {
+          <p class="assist-hint muted">Set an active profile on the <a routerLink="/profile" (click)="close()">Profile</a> page to personalize these.</p>
+        } @else if (!canAssist()) {
+          <p class="assist-hint muted">Add the job description above to enable the assistant.</p>
+        }
+
+        <div class="assist-actions">
+          <button type="button" (click)="scoreFit()" [disabled]="!canAssist() || busy() !== null">
+            {{ busy() === 'fit' ? 'Scoring…' : 'Score fit' }}
+          </button>
+          <button type="button" (click)="writeCoverLetter()" [disabled]="!canAssist() || busy() !== null">
+            {{ busy() === 'letter' ? 'Writing…' : 'Cover letter' }}
+          </button>
+          <button type="button" (click)="tailorResume()" [disabled]="!canAssist() || busy() !== null">
+            {{ busy() === 'cv' ? 'Tailoring…' : 'Tailor CV' }}
+          </button>
+        </div>
+
+        @if (fitResult(); as fit) {
+          <div class="assist-result">
+            <div class="fit-score" [attr.data-band]="fit.score >= 75 ? 'high' : fit.score >= 50 ? 'mid' : 'low'">
+              <span class="fit-num">{{ fit.score }}</span><span class="fit-max">/100</span>
+            </div>
+            <p class="fit-summary">{{ fit.summary }}</p>
+            @if (fit.strengths.length) {
+              <h4 class="assist-h">Strengths</h4>
+              <ul class="fit-list strengths">@for (s of fit.strengths; track $index) { <li>{{ s }}</li> }</ul>
+            }
+            @if (fit.gaps.length) {
+              <h4 class="assist-h">Gaps</h4>
+              <ul class="fit-list gaps">@for (g of fit.gaps; track $index) { <li>{{ g }}</li> }</ul>
+            }
+          </div>
+        }
+
+        @if (coverLetter(); as letter) {
+          <div class="assist-result">
+            <div class="result-head">
+              <h4 class="assist-h">Cover letter</h4>
+              <button type="button" class="copy-btn" (click)="copy(letter)">Copy</button>
+            </div>
+            <div class="result-body letter">{{ letter }}</div>
+          </div>
+        }
+
+        @if (tailoredCv(); as cv) {
+          <div class="assist-result">
+            <div class="result-head">
+              <h4 class="assist-h">Tailored CV · Markdown</h4>
+              <button type="button" class="copy-btn" (click)="copy(cv)">Copy</button>
+            </div>
+            <pre class="result-body cv">{{ cv }}</pre>
+          </div>
+        }
+      </section>
     </div>
 
     <footer class="drawer-foot">

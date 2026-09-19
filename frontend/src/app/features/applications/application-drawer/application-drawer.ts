@@ -1,6 +1,8 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { DatePipe } from '@angular/common';
-import { Component, effect, inject, signal, untracked } from '@angular/core';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   APPLICATION_SOURCES,
   APPLICATION_STATUSES,
@@ -8,7 +10,10 @@ import {
   ApplicationStatus,
   CreateJobApplicationRequest,
 } from '../../../models/job-application';
+import { FitResponse } from '../../../models/assistant';
+import { AiService } from '../../../services/ai.service';
 import { ApplicationsStore } from '../../../services/applications-store';
+import { ProfileStore } from '../../../services/profile-store';
 import { ToastService } from '../../../services/toast.service';
 import { humanize } from '../../../shared/humanize';
 
@@ -16,18 +21,29 @@ import { humanize } from '../../../shared/humanize';
 /// signal, so both the table and the board can trigger it. All fields are signal-backed (zoneless).
 @Component({
   selector: 'app-application-drawer',
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, RouterLink],
   templateUrl: './application-drawer.html',
   styleUrl: './application-drawer.css',
   host: { '(document:keydown.escape)': 'close()' },
 })
 export class ApplicationDrawer {
   protected readonly store = inject(ApplicationsStore);
+  protected readonly profiles = inject(ProfileStore);
+  private readonly ai = inject(AiService);
   private readonly toasts = inject(ToastService);
 
   protected readonly statuses = APPLICATION_STATUSES;
   protected readonly sources = APPLICATION_SOURCES;
   protected readonly humanize = humanize;
+
+  // AI assistant results for the open application (reset when a different one opens).
+  protected readonly fitResult = signal<FitResponse | null>(null);
+  protected readonly coverLetter = signal<string | null>(null);
+  protected readonly tailoredCv = signal<string | null>(null);
+  protected readonly busy = signal<'fit' | 'letter' | 'cv' | null>(null);
+
+  protected readonly hasProfile = computed(() => this.profiles.activeContent() !== null);
+  protected readonly canAssist = computed(() => this.jobDescription().trim().length > 0);
 
   // Editable copy — repopulated whenever a different application is opened.
   protected readonly company = signal('');
@@ -60,6 +76,11 @@ export class ApplicationDrawer {
         this.salaryMax.set(app.salary?.max ?? null);
         this.currency.set(app.salary?.currency ?? 'USD');
         this.saving.set(false);
+        // Assistant output is per-application, so clear it when a different one opens.
+        this.fitResult.set(null);
+        this.coverLetter.set(null);
+        this.tailoredCv.set(null);
+        this.busy.set(null);
       });
     });
   }
@@ -112,5 +133,66 @@ export class ApplicationDrawer {
 
   protected close(): void {
     this.store.closeEdit();
+  }
+
+  // --- AI assistant ----------------------------------------------------------------------------
+
+  protected scoreFit(): void {
+    const jd = this.jobDescription().trim();
+    if (!jd) {
+      return;
+    }
+    this.busy.set('fit');
+    this.ai.fit(jd, this.profiles.asResumeText()).subscribe({
+      next: (r) => {
+        this.fitResult.set(r);
+        this.busy.set(null);
+      },
+      error: (err: HttpErrorResponse) => this.assistFailed(err),
+    });
+  }
+
+  protected writeCoverLetter(): void {
+    const jd = this.jobDescription().trim();
+    if (!jd) {
+      return;
+    }
+    this.busy.set('letter');
+    this.ai.coverLetter(jd, this.profiles.asResumeText()).subscribe({
+      next: (r) => {
+        this.coverLetter.set(r.letter);
+        this.busy.set(null);
+      },
+      error: (err: HttpErrorResponse) => this.assistFailed(err),
+    });
+  }
+
+  protected tailorResume(): void {
+    const jd = this.jobDescription().trim();
+    if (!jd) {
+      return;
+    }
+    this.busy.set('cv');
+    this.ai.tailorCv(jd, this.profiles.asResumeText()).subscribe({
+      next: (r) => {
+        this.tailoredCv.set(r.markdown);
+        this.busy.set(null);
+      },
+      error: (err: HttpErrorResponse) => this.assistFailed(err),
+    });
+  }
+
+  protected copy(text: string): void {
+    navigator.clipboard?.writeText(text).then(
+      () => this.toasts.success('Copied to clipboard.'),
+      () => this.toasts.error('Could not copy.'),
+    );
+  }
+
+  private assistFailed(err: HttpErrorResponse): void {
+    this.busy.set(null);
+    this.toasts.error(
+      err.status === 503 ? 'The AI service is unavailable right now.' : 'The assistant could not respond. Try again.',
+    );
   }
 }
