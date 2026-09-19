@@ -80,6 +80,8 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       Anthropic__Model: claude-opus-5
+      # A full CV yields a large structured profile; 1024 truncated the JSON mid-object.
+      Anthropic__MaxTokens: 4096
       # Sourced from the gitignored .env file (never committed).
       Anthropic__ApiKey: ${ANTHROPIC_API_KEY}
 
