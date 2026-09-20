@@ -3,7 +3,7 @@
 .drawer-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(10, 15, 25, 0.45);
+  background: rgba(20, 17, 14, 0.5);
   z-index: 50;
   animation: drawer-fade 0.2s ease both;
 }
@@ -109,15 +109,16 @@ button.primary:hover:not(:disabled) { background: var(--primary-hover); border-c
 .fit-score { display: flex; align-items: baseline; gap: 0.1rem; font-weight: 800; letter-spacing: -0.02em; }
 .fit-num { font-size: 2rem; }
 .fit-max { font-size: 0.9rem; color: var(--muted); font-weight: 600; }
-.fit-score[data-band='high'] .fit-num { color: #16a34a; }
-.fit-score[data-band='mid'] .fit-num { color: var(--primary); }
+/* Monochrome bands: a strong score reads as solid ink, a middling one recedes to muted, a weak
+   one takes the one functional accent (danger). */
+.fit-score[data-band='high'] .fit-num { color: var(--text); }
+.fit-score[data-band='mid'] .fit-num { color: var(--muted); }
 .fit-score[data-band='low'] .fit-num { color: var(--danger); }
-:root[data-theme='dark'] .fit-score[data-band='high'] .fit-num { color: #4ade80; }
 
 .fit-summary { margin: 0.3rem 0 0; line-height: 1.5; font-size: 0.9rem; }
 .fit-list { margin: 0; padding-left: 1.1rem; }
 .fit-list li { margin: 0.2rem 0; line-height: 1.45; font-size: 0.88rem; }
-.fit-list.strengths li::marker { color: #16a34a; }
+.fit-list.strengths li::marker { color: var(--text); }
 .fit-list.gaps li::marker { color: var(--danger); }
 
 .result-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }

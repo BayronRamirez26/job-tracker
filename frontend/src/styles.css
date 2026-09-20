@@ -1,101 +1,126 @@
+/* Tailwind v4 — theme + utilities only (no preflight, so the hand-built base styles below stand).
+   Utilities read the same design tokens as the components, so they match the palette and themes. */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+/* Make `dark:` utilities follow the app's explicit theme flag, not the OS. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Bridge the design tokens into Tailwind so utilities (bg-panel, text-ink, border-border,
+   text-accent, …) resolve to the themed variables. */
+@theme {
+  --color-bg: var(--bg);
+  --color-panel: var(--panel);
+  --color-border: var(--border);
+  --color-ink: var(--text);
+  --color-muted: var(--muted);
+  --color-accent: var(--primary);
+  --color-accent-tint: var(--primary-tint);
+  --color-danger: var(--danger);
+  --radius-card: var(--radius-lg);
+  --radius-control: var(--radius);
+}
+
 :root {
   color-scheme: light;
 
-  /* Surfaces & text */
-  --bg: #f5f6f8;
+  /* Surfaces & text — warm graphite neutrals */
+  --bg: #f4f2ee;
   --panel: #ffffff;
-  --border: #e4e7ec;
-  --text: #1a1f2b;
-  --muted: #667085;
+  --border: #e6e2db;
+  --text: #201d18;
+  --muted: #6b655c;
 
   /* Interaction surfaces */
   --control-bg: #ffffff;
-  --control-hover: #f2f4f7;
-  --surface-hover: #f7f9fb;
+  --control-hover: #f0ede8;
+  --surface-hover: #f6f4f0;
   --field-bg: #ffffff;
-  --placeholder: #98a2b3;
-  --selection: rgba(43, 108, 176, 0.18);
-  --on-primary: #ffffff;
+  --placeholder: #a29b90;
+  --selection: rgba(32, 29, 24, 0.12);
+  --on-primary: #f7f5f1;
 
   /* Type */
   --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
-  /* Brand */
-  --primary: #2b6cb0;
-  --primary-hover: #245c98;
-  --primary-tint: #e8f0f9;
+  /* Accent — ink, not colour. Buttons and links carry weight, not hue. */
+  --primary: #26221b;
+  --primary-hover: #3a342b;
+  --primary-tint: #edeae4;
 
-  /* Danger */
-  --danger: #c0392b;
-  --danger-ink: #912018;
-  --danger-tint: #fdecec;
-  --danger-border: #f3c9c4;
+  /* Danger — the one retained functional hue: a muted, warm clay that sits in the graphite world. */
+  --danger: #9c4a38;
+  --danger-ink: #86392b;
+  --danger-tint: #f4ebe7;
+  --danger-border: #e4d2cb;
 
   /* Shape */
   --radius: 8px;
   --radius-lg: 12px;
   --radius-pill: 999px;
 
-  /* Elevation — every shadow carries an offset and a soft blur, tinted with the ink colour */
-  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.05);
-  --shadow-md: 0 1px 2px rgba(16, 24, 40, 0.04), 0 6px 16px -6px rgba(16, 24, 40, 0.12);
+  /* Elevation — every shadow carries an offset and a soft blur, tinted with the warm ink. */
+  --shadow-sm: 0 1px 2px rgba(32, 25, 16, 0.05), 0 1px 3px rgba(32, 25, 16, 0.06);
+  --shadow-md: 0 1px 2px rgba(32, 25, 16, 0.05), 0 6px 16px -6px rgba(32, 25, 16, 0.14);
 
-  /* Focus ring */
-  --ring: 0 0 0 3px rgba(43, 108, 176, 0.3);
+  /* Focus ring — ink */
+  --ring: 0 0 0 3px rgba(32, 29, 24, 0.28);
 
-  /* Status accents — a soft tint + a same-hue ink tuned for >=4.5:1 text contrast.
-     They trace the pipeline: neutral → in-flight → warming → positive → closed. */
-  --st-wishlist-bg: #eef1f5;    --st-wishlist-fg: #4b5563;
-  --st-applied-bg: #e6f0fa;     --st-applied-fg: #1c5288;
-  --st-phonescreen-bg: #e2f2f0; --st-phonescreen-fg: #0f766e;
-  --st-interview-bg: #fbeddb;   --st-interview-fg: #92500a;
-  --st-offer-bg: #e4f3ea;       --st-offer-fg: #1a7a45;
-  --st-accepted-bg: #d8f3e0;    --st-accepted-fg: #166534;
-  --st-rejected-bg: #fbe7e5;    --st-rejected-fg: #b42318;
-  --st-withdrawn-bg: #eceff2;   --st-withdrawn-fg: #556170;
+  /* Status accents — a warm-gray VALUE ramp: the pipeline reads by lightness, not hue. Active
+     stages darken as they advance toward the milestone states; not-active states stay light. */
+  --st-wishlist-bg: #efede9;    --st-wishlist-fg: #6d675e;
+  --st-applied-bg: #eae7e1;     --st-applied-fg: #5c564d;
+  --st-phonescreen-bg: #e6e2db; --st-phonescreen-fg: #4e483f;
+  --st-interview-bg: #e2ddd5;   --st-interview-fg: #423c34;
+  --st-offer-bg: #ded8cf;       --st-offer-fg: #322d27;
+  --st-accepted-bg: #d9d3c9;    --st-accepted-fg: #221f19;
+  --st-rejected-bg: #efede9;    --st-rejected-fg: #6d675e;
+  --st-withdrawn-bg: #efede9;   --st-withdrawn-fg: #6d675e;
 }
 
-/* Dark theme — same roles, re-tinted. Stamped on <html data-theme="dark"> (see index.html's
+/* Dark theme — same roles, re-tinted warm. Stamped on <html data-theme="dark"> (see index.html's
    no-flash script + ThemeService), so an explicit choice always wins. */
 :root[data-theme="dark"] {
   color-scheme: dark;
 
-  --bg: #0f1420;
-  --panel: #161c28;
-  --border: #2a3242;
-  --text: #e7eaf0;
-  --muted: #9aa4b6;
+  --bg: #14120e;
+  --panel: #1d1a15;
+  --border: #322e27;
+  --text: #ece8e1;
+  --muted: #a49d92;
 
-  --control-bg: #1d2534;
-  --control-hover: #263041;
-  --surface-hover: #1c2432;
-  --field-bg: #10161f;
-  --placeholder: #6b7688;
-  --selection: rgba(79, 151, 221, 0.32);
-  --on-primary: #ffffff;
+  --control-bg: #26221c;
+  --control-hover: #302b24;
+  --surface-hover: #241f1a;
+  --field-bg: #17130f;
+  --placeholder: #786f64;
+  --selection: rgba(236, 232, 225, 0.18);
+  --on-primary: #1a1712;
 
-  --primary: #4f97dd;
-  --primary-hover: #63a6e6;
-  --primary-tint: #1b2c40;
+  /* Accent inverts in the dark: the ink becomes a warm off-white. */
+  --primary: #ece8e1;
+  --primary-hover: #ffffff;
+  --primary-tint: #2b2620;
 
-  --danger: #e07a6f;
-  --danger-ink: #f2b2ab;
-  --danger-tint: #2b1a18;
-  --danger-border: #47302d;
+  --danger: #cf9184;
+  --danger-ink: #e2a99d;
+  --danger-tint: #2b1d18;
+  --danger-border: #47312a;
 
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 1px 3px rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.4), 0 10px 24px -8px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 2px 6px rgba(0, 0, 0, 0.45), 0 10px 24px -8px rgba(0, 0, 0, 0.65);
 
-  --ring: 0 0 0 3px rgba(79, 151, 221, 0.4);
+  --ring: 0 0 0 3px rgba(236, 232, 225, 0.32);
 
-  --st-wishlist-bg: #242a35;    --st-wishlist-fg: #b8c1cf;
-  --st-applied-bg: #15293f;     --st-applied-fg: #8dc2f0;
-  --st-phonescreen-bg: #123330; --st-phonescreen-fg: #6fd6cb;
-  --st-interview-bg: #362810;   --st-interview-fg: #e8ba7f;
-  --st-offer-bg: #133121;       --st-offer-fg: #79d69b;
-  --st-accepted-bg: #113322;    --st-accepted-fg: #6fdd97;
-  --st-rejected-bg: #351b1a;    --st-rejected-fg: #f2a29a;
-  --st-withdrawn-bg: #242a35;   --st-withdrawn-fg: #98a3b5;
+  --st-wishlist-bg: #2a2621;    --st-wishlist-fg: #b4aea4;
+  --st-applied-bg: #2f2b25;     --st-applied-fg: #bfb9ae;
+  --st-phonescreen-bg: #34302a; --st-phonescreen-fg: #cac3b7;
+  --st-interview-bg: #39342d;   --st-interview-fg: #d4cdc0;
+  --st-offer-bg: #3f3931;       --st-offer-fg: #e2dbce;
+  --st-accepted-bg: #463f36;    --st-accepted-fg: #f1ebe0;
+  --st-rejected-bg: #2a2621;    --st-rejected-fg: #948e84;
+  --st-withdrawn-bg: #2a2621;   --st-withdrawn-fg: #948e84;
 }
 
 * { box-sizing: border-box; }
@@ -129,8 +154,16 @@ body {
 
 h1, h2, h3 { line-height: 1.25; letter-spacing: -0.015em; }
 
-a { color: var(--primary); text-decoration: none; }
-a:hover { text-decoration: underline; text-underline-offset: 2px; }
+/* Links are ink, so a soft underline carries the affordance the colour no longer does; it firms
+   up on hover. The top nav styles its own links, so it opts out. */
+a {
+  color: var(--primary);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--primary) 32%, transparent);
+  text-underline-offset: 2px;
+}
+a:hover { text-decoration-color: var(--primary); }
+.app-header nav a { text-decoration: none; }
 
 button {
   font-family: var(--font-sans);
@@ -234,7 +267,7 @@ input::placeholder, textarea::placeholder { color: var(--placeholder); }
   font-size: 0.875rem;
 }
 
-/* Status pill — colour carries the pipeline stage at a glance. */
+/* Status pill — a warm-gray value carries the pipeline stage at a glance. */
 .badge {
   display: inline-flex;
   align-items: center;
