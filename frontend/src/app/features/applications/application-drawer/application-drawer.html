@@ -77,8 +77,11 @@
           <button type="button" (click)="writeCoverLetter()" [disabled]="!canAssist() || busy() !== null">
             {{ busy() === 'letter' ? 'Writing…' : 'Cover letter' }}
           </button>
-          <button type="button" (click)="tailorResume()" [disabled]="!canAssist() || busy() !== null">
+          <button type="button" (click)="tailorResume('markdown')" [disabled]="!canAssist() || busy() !== null">
             {{ busy() === 'cv' ? 'Tailoring…' : 'Tailor CV' }}
+          </button>
+          <button type="button" (click)="tailorResume('latex')" [disabled]="!canAssist() || busy() !== null">
+            {{ busy() === 'tex' ? 'Building…' : 'LaTeX résumé' }}
           </button>
         </div>
 
@@ -112,8 +115,13 @@
         @if (tailoredCv(); as cv) {
           <div class="assist-result">
             <div class="result-head">
-              <h4 class="assist-h">Tailored CV · Markdown</h4>
-              <button type="button" class="copy-btn" (click)="copy(cv)">Copy</button>
+              <h4 class="assist-h">Tailored CV · {{ tailoredCvFormat() === 'latex' ? 'LaTeX' : 'Markdown' }}</h4>
+              <div class="result-tools">
+                @if (tailoredCvFormat() === 'latex') {
+                  <button type="button" class="copy-btn" (click)="downloadTex(cv)">Download .tex</button>
+                }
+                <button type="button" class="copy-btn" (click)="copy(cv)">Copy</button>
+              </div>
             </div>
             <pre class="result-body cv">{{ cv }}</pre>
           </div>

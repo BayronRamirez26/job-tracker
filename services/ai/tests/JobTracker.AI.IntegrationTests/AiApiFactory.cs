@@ -37,6 +37,7 @@ public sealed class AiApiFactory : WebApplicationFactory<Program>
             "{\"score\":78,\"strengths\":[\"Strong C# background\"],\"gaps\":[\"No Kubernetes\"],\"summary\":\"A solid overall fit.\"}";
         public const string StubCoverLetter = "Dear Hiring Manager, I am excited to apply. Sincerely, Ada.";
         public const string StubTailoredCv = "# Ada Lovelace\n\n## Summary\nTailored to the role.";
+        public const string StubLatex = "\\documentclass{article}\n\\begin{document}\nTailored.\n\\end{document}";
 
         // Each use case names its intent in the system prompt; return the shape it expects.
         public Task<AiCompletion> CompleteAsync(string systemPrompt, string userPrompt, CancellationToken cancellationToken = default)
@@ -57,6 +58,10 @@ public sealed class AiApiFactory : WebApplicationFactory<Program>
             else if (systemPrompt.Contains("cover letter", StringComparison.OrdinalIgnoreCase))
             {
                 text = StubCoverLetter;
+            }
+            else if (systemPrompt.Contains("latex", StringComparison.OrdinalIgnoreCase))
+            {
+                text = StubLatex;
             }
             else if (systemPrompt.Contains("tailored resume", StringComparison.OrdinalIgnoreCase))
             {

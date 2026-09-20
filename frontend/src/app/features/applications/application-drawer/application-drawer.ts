@@ -40,7 +40,8 @@ export class ApplicationDrawer {
   protected readonly fitResult = signal<FitResponse | null>(null);
   protected readonly coverLetter = signal<string | null>(null);
   protected readonly tailoredCv = signal<string | null>(null);
-  protected readonly busy = signal<'fit' | 'letter' | 'cv' | null>(null);
+  protected readonly tailoredCvFormat = signal<'markdown' | 'latex'>('markdown');
+  protected readonly busy = signal<'fit' | 'letter' | 'cv' | 'tex' | null>(null);
 
   protected readonly hasProfile = computed(() => this.profiles.activeContent() !== null);
   protected readonly canAssist = computed(() => this.jobDescription().trim().length > 0);
@@ -80,6 +81,7 @@ export class ApplicationDrawer {
         this.fitResult.set(null);
         this.coverLetter.set(null);
         this.tailoredCv.set(null);
+        this.tailoredCvFormat.set('markdown');
         this.busy.set(null);
       });
     });
@@ -167,19 +169,35 @@ export class ApplicationDrawer {
     });
   }
 
-  protected tailorResume(): void {
+  protected tailorResume(format: 'markdown' | 'latex'): void {
     const jd = this.jobDescription().trim();
     if (!jd) {
       return;
     }
-    this.busy.set('cv');
-    this.ai.tailorCv(jd, this.profiles.asResumeText()).subscribe({
+    this.busy.set(format === 'latex' ? 'tex' : 'cv');
+    this.ai.tailorCv(jd, this.profiles.asResumeText(), format).subscribe({
       next: (r) => {
-        this.tailoredCv.set(r.markdown);
+        this.tailoredCv.set(r.content);
+        this.tailoredCvFormat.set(r.format);
         this.busy.set(null);
       },
       error: (err: HttpErrorResponse) => this.assistFailed(err),
     });
+  }
+
+  /// Saves the generated LaTeX résumé as a .tex file (a client-side download the user initiates).
+  protected downloadTex(content: string): void {
+    try {
+      const blob = new Blob([content], { type: 'application/x-tex' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'resume.tex';
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      this.toasts.error('Could not download the file.');
+    }
   }
 
   protected copy(text: string): void {

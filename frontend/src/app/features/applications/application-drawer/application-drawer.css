@@ -121,7 +121,8 @@ button.primary:hover:not(:disabled) { background: var(--primary-hover); border-c
 .fit-list.gaps li::marker { color: var(--danger); }
 
 .result-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
-.copy-btn { padding: 0.2rem 0.55rem; font-size: 0.78rem; }
+.result-tools { display: flex; gap: 0.4rem; flex: none; }
+.copy-btn { padding: 0.2rem 0.55rem; font-size: 0.78rem; white-space: nowrap; }
 .result-body { margin-top: 0.5rem; font-size: 0.88rem; line-height: 1.5; }
 .result-body.letter { white-space: pre-wrap; }
 .result-body.cv {

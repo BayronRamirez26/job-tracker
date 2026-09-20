@@ -17,7 +17,7 @@ public sealed class AssistantApiTests : IClassFixture<AiApiFactory>
     private static object Body() => new { jobDescription = "Backend engineer at Acme.", candidateProfile = "Senior engineer, C#." };
 
     private sealed record CoverLetterDto(string Letter, string Model);
-    private sealed record TailoredCvDto(string Markdown, string Model);
+    private sealed record TailoredCvDto(string Content, string Format, string Model);
     private sealed record FitDto(int Score, string[] Strengths, string[] Gaps, string Summary, string Model);
 
     [Fact]
@@ -38,7 +38,21 @@ public sealed class AssistantApiTests : IClassFixture<AiApiFactory>
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<TailoredCvDto>(Json);
-        Assert.StartsWith("# Ada Lovelace", body!.Markdown);
+        Assert.StartsWith("# Ada Lovelace", body!.Content);
+        Assert.Equal("markdown", body.Format);
+    }
+
+    [Fact]
+    public async Task TailorCv_latex_returns_200_with_latex_source()
+    {
+        var response = await _client.PostAsJsonAsync(
+            "/api/ai/tailor-cv",
+            new { jobDescription = "Backend engineer at Acme.", candidateProfile = "Senior engineer, C#.", format = "latex" });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<TailoredCvDto>(Json);
+        Assert.StartsWith("\\documentclass", body!.Content);
+        Assert.Equal("latex", body.Format);
     }
 
     [Fact]

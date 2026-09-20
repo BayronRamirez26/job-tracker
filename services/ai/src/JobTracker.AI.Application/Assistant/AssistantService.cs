@@ -40,6 +40,115 @@ public sealed class AssistantService : IAssistantService
         "(one or two sentences of honest overall assessment). Judge strictly from the CANDIDATE PROFILE " +
         "against the JOB DESCRIPTION; never invent qualifications.";
 
+    // The candidate's LaTeX résumé template — the exact format and their baseline content. The LaTeX
+    // tailoring keeps this preamble/header verbatim and only reshapes the section content to the role.
+    private const string LatexTemplate = @"\documentclass[letterpaper,10pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage{enumitem}
+\usepackage{multicol}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\usepackage[left=1in,right=1in,top=1in,bottom=1in]{geometry}
+\input{glyphtounicode}
+
+% Font
+\usepackage[sfdefault]{roboto}  % Sans-serif font
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+\pdfgentounicode=1
+\urlstyle{same}
+\linespread{1.1}
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{\Large\bfseries\scshape\raggedright}{}{0em}{}[\titlerule]
+
+% Custom commands
+\newcommand{\resumeItem}[1]{\item #1 \vspace{-2pt}}
+\newcommand{\resumeSubheading}[4]{
+\vspace{1pt}\item
+  \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & #2 \\
+    \textit{#3} & \textit{#4} \\
+  \end{tabular*}\vspace{-5pt}
+}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubHeadingList}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+% Bulleted list for experience
+\newcommand{\resumeBulletList}{\begin{itemize}[leftmargin=0.3in, label={\small\textbullet}]}
+\newcommand{\resumeBulletListEnd}{\end{itemize}}
+
+\begin{document}
+
+\begin{center}
+  \textbf{\Huge Bayron Ramírez Jiménez} \\
+  \vspace{3pt}
+  {\large Full-Stack Software Engineer} \\
+  \vspace{3pt}
+  \small
+  Costa Rica \textbar{}
+  +506 6002-8152 \textbar{}
+  \href{mailto:ramirezjimenezbayron@gmail.com}{ramirezjimenezbayron@gmail.com} \\
+  \href{https://linkedin.com/in/bayron-ramirez-jimenez}{linkedin.com/in/bayron-ramirez-jimenez} \textbar{}
+  \href{https://github.com/BayronRamirez26}{github.com/BayronRamirez26}
+\end{center}
+
+\section{Summary}
+% ... tailor to the role ...
+
+\section{Technical Skills}
+\resumeSubHeadingList
+  % ... \resumeItem lines ...
+\resumeSubHeadingListEnd
+
+\section{Experience}
+\resumeSubHeadingList
+  % ... \resumeSubheading + \resumeBulletList blocks ...
+\resumeSubHeadingListEnd
+
+\section{Projects}
+\resumeSubHeadingList
+  % ... \resumeSubheading + \resumeBulletList blocks ...
+\resumeSubHeadingListEnd
+
+\section{Education}
+% ... institution and degree ...
+
+\section{Languages}
+\resumeSubHeadingList
+  % ... \resumeItem lines ...
+\resumeSubHeadingListEnd
+
+\end{document}";
+
+    private const string TailoredCvLatexPrompt =
+        "You produce a compile-ready LaTeX resume tailored to a specific job. Use the TEMPLATE below as the " +
+        "exact format and the candidate's baseline. Reproduce its preamble, header, and every custom command " +
+        "definition VERBATIM, and keep the header identity and contact block exactly as written. Tailor ONLY " +
+        "the section content (Summary, Technical Skills, Experience, Projects, Education, Languages) to the JOB " +
+        "DESCRIPTION: reorder and rephrase bullet points to foreground the most relevant experience, drop or " +
+        "de-emphasize weakly relevant items, and mirror the posting's language where it is truthful. Ground " +
+        "every claim in the CANDIDATE PROFILE and the template; never fabricate experience, employers, skills, " +
+        "or dates. Escape LaTeX special characters (& % $ # _) in generated prose. Return ONLY the LaTeX " +
+        "source — no markdown fences, no commentary.\n\nTEMPLATE:\n" + LatexTemplate;
+
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
         PropertyNameCaseInsensitive = true,
@@ -63,8 +172,9 @@ public sealed class AssistantService : IAssistantService
 
     public async Task<TailoredCvResponse> TailoredCvAsync(AssistRequest request, CancellationToken cancellationToken = default)
     {
-        var completion = await CompleteAsync(TailoredCvPrompt, request, cancellationToken);
-        return new TailoredCvResponse(completion.Text.Trim(), completion.Model);
+        var latex = string.Equals(request.Format, "latex", StringComparison.OrdinalIgnoreCase);
+        var completion = await CompleteAsync(latex ? TailoredCvLatexPrompt : TailoredCvPrompt, request, cancellationToken);
+        return new TailoredCvResponse(StripFences(completion.Text.Trim()), latex ? "latex" : "markdown", completion.Model);
     }
 
     public async Task<FitResponse> FitAsync(AssistRequest request, CancellationToken cancellationToken = default)
@@ -91,6 +201,24 @@ public sealed class AssistantService : IAssistantService
             : $"CANDIDATE PROFILE:\n{request.CandidateProfile.Trim()}\n\nJOB DESCRIPTION:\n{jobDescription.Value}";
 
         return await _ai.CompleteAsync(systemPrompt, userPrompt, cancellationToken);
+    }
+
+    /// <summary>Removes a single surrounding triple-backtick code fence if the model added one.</summary>
+    private static string StripFences(string text)
+    {
+        if (!text.StartsWith("```", StringComparison.Ordinal))
+        {
+            return text;
+        }
+
+        var firstNewline = text.IndexOf('\n');
+        var body = firstNewline >= 0 ? text[(firstNewline + 1)..] : text;
+        if (body.EndsWith("```", StringComparison.Ordinal))
+        {
+            body = body[..^3];
+        }
+
+        return body.Trim();
     }
 
     private static ParsedFit ParseFit(string text)

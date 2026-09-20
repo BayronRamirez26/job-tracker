@@ -14,6 +14,7 @@ export interface CoverLetterResponse {
 }
 
 export interface TailoredCvResponse {
-  markdown: string;
+  content: string;
+  format: 'markdown' | 'latex';
   model: string;
 }

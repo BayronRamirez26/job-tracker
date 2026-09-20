@@ -36,14 +36,27 @@ public class AssistantServiceTests
     }
 
     [Fact]
-    public async Task TailoredCvAsync_returns_markdown()
+    public async Task TailoredCvAsync_returns_markdown_by_default()
     {
         AiReturns("# Ada Lovelace\n\n## Summary\nTailored.");
 
         var result = await _sut.TailoredCvAsync(Request());
 
-        Assert.StartsWith("# Ada Lovelace", result.Markdown);
+        Assert.StartsWith("# Ada Lovelace", result.Content);
+        Assert.Equal("markdown", result.Format);
         Assert.Equal("claude-opus-5", result.Model);
+    }
+
+    [Fact]
+    public async Task TailoredCvAsync_returns_latex_when_requested_and_strips_fences()
+    {
+        AiReturns("```latex\n\\documentclass{article}\\begin{document}x\\end{document}\n```");
+
+        var result = await _sut.TailoredCvAsync(new AssistRequest("JD", "profile", "latex"));
+
+        Assert.StartsWith("\\documentclass", result.Content); // fence removed
+        Assert.DoesNotContain("```", result.Content);
+        Assert.Equal("latex", result.Format);
     }
 
     [Fact]

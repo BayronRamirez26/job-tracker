@@ -37,7 +37,11 @@ export class AiService {
     return this.http.post<CoverLetterResponse>(`${this.baseUrl}/cover-letter`, { jobDescription, candidateProfile });
   }
 
-  tailorCv(jobDescription: string, candidateProfile: string | null): Observable<TailoredCvResponse> {
-    return this.http.post<TailoredCvResponse>(`${this.baseUrl}/tailor-cv`, { jobDescription, candidateProfile });
+  tailorCv(
+    jobDescription: string,
+    candidateProfile: string | null,
+    format: 'markdown' | 'latex' = 'markdown',
+  ): Observable<TailoredCvResponse> {
+    return this.http.post<TailoredCvResponse>(`${this.baseUrl}/tailor-cv`, { jobDescription, candidateProfile, format });
   }
 }
