@@ -97,6 +97,19 @@
   <app-applications-board />
 } @else {
   <section class="panel">
+    <div class="filter-bar" role="group" aria-label="Filter by status">
+      <button type="button" class="filter-chip" [class.active]="statusFilter() === 'all'" (click)="setStatusFilter('all')">
+        All <span class="chip-count">{{ statusCounts()['all'] }}</span>
+      </button>
+      @for (s of statuses; track s) {
+        @if (statusCounts()[s] > 0 || statusFilter() === s) {
+          <button type="button" class="filter-chip" [attr.data-status]="s" [class.active]="statusFilter() === s" (click)="setStatusFilter(s)">
+            {{ humanize(s) }} <span class="chip-count">{{ statusCounts()[s] }}</span>
+          </button>
+        }
+      }
+    </div>
+
     <div class="table-wrap">
       <table class="apps">
         <thead>
@@ -105,7 +118,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (app of applications(); track app.id) {
+          @for (app of filteredApplications(); track app.id) {
             <tr class="row-click" (click)="openEdit(app)" title="Edit application">
               <td class="strong">{{ app.company }}</td>
               <td>{{ app.position }}</td>
@@ -114,6 +127,8 @@
               <td class="tnum">{{ app.appliedDate ?? '—' }}</td>
               <td class="actions"><button class="danger" (click)="remove(app); $event.stopPropagation()">Delete</button></td>
             </tr>
+          } @empty {
+            <tr><td colspan="6" class="muted empty-row">No applications with this status.</td></tr>
           }
         </tbody>
       </table>

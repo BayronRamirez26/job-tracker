@@ -1,9 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {
   APPLICATION_SOURCES,
   APPLICATION_STATUSES,
+  ApplicationStatus,
   CreateJobApplicationRequest,
   JobApplication,
 } from '../../../models/job-application';
@@ -23,7 +24,10 @@ interface SalaryForm {
   currency: string;
 }
 
+type StatusFilter = 'all' | ApplicationStatus;
+
 const VIEW_KEY = 'jobtracker.appsView';
+const FILTER_KEY = 'jobtracker.appsStatusFilter';
 
 @Component({
   selector: 'app-applications-list',
@@ -47,6 +51,21 @@ export class ApplicationsList {
 
   protected readonly view = signal<View>(this.initialView());
 
+  // Status filter for the table view (persisted, like the view toggle).
+  protected readonly statusFilter = signal<StatusFilter>(this.initialFilter());
+  protected readonly filteredApplications = computed(() => {
+    const filter = this.statusFilter();
+    const apps = this.applications();
+    return filter === 'all' ? apps : apps.filter((a) => a.status === filter);
+  });
+  // Count per status (plus a total), so each filter chip can show how many it holds.
+  protected readonly statusCounts = computed(() => {
+    const counts = { all: this.applications().length } as Record<StatusFilter, number>;
+    for (const s of APPLICATION_STATUSES) counts[s] = 0;
+    for (const a of this.applications()) counts[a.status]++;
+    return counts;
+  });
+
   protected form: CreateJobApplicationRequest = this.blankForm();
   protected salary: SalaryForm = this.blankSalary();
 
@@ -64,6 +83,15 @@ export class ApplicationsList {
     this.view.set(view);
     try {
       localStorage.setItem(VIEW_KEY, view);
+    } catch {
+      /* ignore */
+    }
+  }
+
+  protected setStatusFilter(filter: StatusFilter): void {
+    this.statusFilter.set(filter);
+    try {
+      localStorage.setItem(FILTER_KEY, filter);
     } catch {
       /* ignore */
     }
@@ -168,5 +196,17 @@ export class ApplicationsList {
       /* ignore */
     }
     return 'table';
+  }
+
+  private initialFilter(): StatusFilter {
+    try {
+      const f = localStorage.getItem(FILTER_KEY);
+      if (f === 'all' || (f && (APPLICATION_STATUSES as readonly string[]).includes(f))) {
+        return f as StatusFilter;
+      }
+    } catch {
+      /* ignore */
+    }
+    return 'all';
   }
 }

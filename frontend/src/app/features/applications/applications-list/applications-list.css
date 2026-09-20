@@ -107,6 +107,35 @@ table.apps thead th {
 table.apps tbody tr { transition: background-color 0.12s ease; }
 table.apps tbody tr:hover { background: var(--surface-hover); }
 table.apps tbody tr.row-click { cursor: pointer; }
+
+/* Status filter */
+.filter-bar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-pill);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.filter-chip.active {
+  color: var(--primary);
+  border-color: var(--primary);
+  background: var(--primary-tint);
+}
+.chip-count {
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.02rem 0.4rem;
+  border-radius: var(--radius-pill);
+  background: var(--surface-hover);
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.filter-chip.active .chip-count { background: var(--control-bg); color: var(--primary); }
+.empty-row { text-align: center; padding: 1.5rem 0; }
 table.apps tbody tr:last-child td { border-bottom: none; }
 
 table.apps td.strong { font-weight: 600; }
